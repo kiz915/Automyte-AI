@@ -214,27 +214,7 @@ export default function LandingPage() {
               {/* Home Content */}
               <div className="space-y-4">
                 <h3 className="text-lg font-serif font-semibold text-white">Good morning, Founder</h3>
-                <div className="bg-gradient-to-r from-indigo-900 to-purple-900 p-4 rounded-xl border border-white/10 space-y-2">
-                  <div className="flex justify-between text-xs font-bold">
-                    <span>Automyte Roadmap</span>
-                    <span className="text-amber-400">9% &gt;</span>
-                  </div>
-                  <div className="h-1.5 w-full bg-black/40 rounded-full overflow-hidden">
-                    <div className="h-full bg-amber-400" style={{ width: "9%" }} />
-                  </div>
-                </div>
-
-                <div className="space-y-2 pt-2 text-xs">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Suggested Next</span>
-                  {["App is started", "Build marketing website", "Sales positioning is ready", "Brand identity"].map((task, i) => (
-                    <div key={task} className="flex items-center gap-2 p-2.5 bg-white/5 rounded-lg border border-white/5">
-                      <span className="w-3.5 h-3.5 rounded border border-white/30 flex items-center justify-center text-[8px] text-amber-400">
-                        {i % 2 === 0 ? "✓" : ""}
-                      </span>
-                      <span className={i % 2 === 0 ? "text-slate-400 line-through" : "text-slate-200"}>{task}</span>
-                    </div>
-                  ))}
-                </div>
+                <p className="text-xs text-slate-400">Welcome back to your operational control center</p>
               </div>
             </div>
           </div>

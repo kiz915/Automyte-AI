@@ -532,55 +532,8 @@ export default function HomePage() {
               {activeTab === "home" && (
                 <div className="flex-1 overflow-y-auto p-5 space-y-6">
                   <div>
-                    <h1 className="text-lg font-serif font-semibold text-white">Good morning, Automyte</h1>
+                    <h1 className="text-lg font-serif font-semibold text-white">Good morning, Founder</h1>
                     <p className="text-xs text-slate-400">Welcome back to your operational control center</p>
-                  </div>
-
-                  {/* Automyte Roadmap Card */}
-                  <div 
-                    onClick={() => setIsTechTreeOpen(true)}
-                    className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-900/60 to-purple-900/60 border border-white/10 p-5 cursor-pointer hover:border-amber-500/50 transition-all shadow-xl group"
-                  >
-                    <div className="flex items-center justify-between text-xs font-medium text-white mb-3">
-                      <span className="font-bold tracking-wide">Automyte Roadmap</span>
-                      <span className="text-amber-400 font-bold group-hover:translate-x-1 transition-transform">9% &gt;</span>
-                    </div>
-                    <div className="h-2 w-full bg-black/40 rounded-full overflow-hidden">
-                      <div className="h-full bg-gradient-to-r from-amber-500 to-amber-300 rounded-full" style={{ width: "9%" }} />
-                    </div>
-                  </div>
-
-                  {/* Suggested Checklist */}
-                  <div className="space-y-3">
-                    <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Suggested Next</h3>
-                    <div className="space-y-2">
-                      {[
-                        { label: "App is started", status: "completed" },
-                        { label: "Build marketing website", status: "todo" },
-                        { label: "Sales positioning is ready", status: "todo" },
-                        { label: "Brand identity configuration", status: "completed" },
-                        { label: "Setup social presence campaigns", status: "todo" }
-                      ].map((item, idx) => (
-                        <div key={idx} className="flex items-center justify-between bg-[#20202A] border border-white/10 rounded-xl p-3.5 shadow-sm">
-                          <div className="flex items-center gap-3">
-                            <input 
-                              type="checkbox" 
-                              checked={item.status === "completed"} 
-                              className="w-4 h-4 accent-amber-500 rounded cursor-pointer"
-                              readOnly 
-                            />
-                            <span className={`text-xs font-medium ${item.status === "completed" ? "text-slate-500 line-through" : "text-slate-200"}`}>
-                              {item.label}
-                            </span>
-                          </div>
-                          <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded ${
-                            item.status === "completed" ? "text-emerald-400 bg-emerald-500/10" : "text-slate-400 bg-white/5"
-                          }`}>
-                            {item.status}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
                   </div>
 
                   {/* Approvals Attention List */}
