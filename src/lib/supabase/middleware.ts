@@ -55,6 +55,7 @@ export async function updateSession(request: NextRequest) {
       !request.nextUrl.pathname.startsWith("/pricing") &&
       !request.nextUrl.pathname.startsWith("/resources") &&
       !request.nextUrl.pathname.startsWith("/how-to") &&
+      !request.nextUrl.pathname.startsWith("/onboarding") &&
       request.nextUrl.pathname !== "/";
 
     if (!user && isProtectedRoute) {

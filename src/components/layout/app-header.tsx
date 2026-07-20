@@ -31,6 +31,8 @@ import {
 
 interface AppHeaderProps {
   onMenuClick?: () => void;
+  onOpenTechTree?: () => void;
+  selectedDeptName?: string | null;
 }
 
 // ---------------------------------------------------------------------------
@@ -64,33 +66,24 @@ function getPageTitle(pathname: string): string {
 // Header component
 // ---------------------------------------------------------------------------
 
-export function AppHeader({ onMenuClick }: AppHeaderProps) {
+export function AppHeader({ onMenuClick, onOpenTechTree, selectedDeptName }: AppHeaderProps) {
   const pathname = usePathname();
   const pageTitle = getPageTitle(pathname);
-  const [notificationCount] = useState(3);
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
 
-  // Cmd+K listener (just a placeholder – full search modal lives elsewhere)
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
-        e.preventDefault();
-        // TODO: open global search modal
-      }
-    };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, []);
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === "dark" ? "light" : "dark"));
+  };
 
   return (
     <header
       className={cn(
-        "sticky top-0 z-30 flex h-16 items-center justify-between gap-4 px-6",
-        "glass border-b border-white/[0.06] backdrop-blur-xl"
+        "sticky top-0 z-30 flex h-14 items-center justify-between gap-4 px-5",
+        "bg-[#141417]/90 border-b border-white/[0.08] backdrop-blur-md text-white select-none"
       )}
     >
-      {/* ---- Left: Mobile menu + Page title ---- */}
-      <div className="flex items-center gap-3">
-        {/* Mobile hamburger */}
+      {/* ---- Left: Mobile Hamburger + Workspace Switcher + Breadcrumb ---- */}
+      <div className="flex items-center gap-3 text-xs sm:text-sm font-medium">
         <button
           onClick={onMenuClick}
           className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.06] transition-colors lg:hidden focus:outline-none"
@@ -99,115 +92,111 @@ export function AppHeader({ onMenuClick }: AppHeaderProps) {
           <Menu className="h-5 w-5" />
         </button>
 
-        <motion.h1
-          key={pageTitle}
-          initial={{ opacity: 0, y: 4 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.25, ease: "easeOut" }}
-          className="heading-md text-white"
-        >
-          {pageTitle}
-        </motion.h1>
+        {/* Workspace Chip */}
+        <DropdownMenu>
+          <DropdownMenuTrigger className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.08] transition-colors focus:outline-none">
+            <span className="flex items-center justify-center w-5 h-5 rounded text-[10px] font-extrabold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+              AA
+            </span>
+            <span className="font-semibold text-slate-200">Automyte</span>
+            <span className="text-[10px] text-slate-400">▾</span>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent side="bottom" align="start" className="bg-[#1C1C21] border-white/10 text-white w-48 shadow-xl">
+            <DropdownMenuLabel className="text-xs text-slate-400 font-normal">Workspaces</DropdownMenuLabel>
+            <DropdownMenuItem className="focus:bg-white/10 gap-2 cursor-pointer font-medium">
+              <span className="w-2 h-2 rounded-full bg-emerald-400" />
+              Automyte AI (Active)
+            </DropdownMenuItem>
+            <DropdownMenuSeparator className="bg-white/10" />
+            <DropdownMenuItem className="focus:bg-white/10 text-xs text-amber-400 cursor-pointer">
+              + Create new workspace
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        {/* Breadcrumb separator */}
+        {selectedDeptName && (
+          <>
+            <span className="text-slate-500 font-light">&gt;</span>
+            <span className="text-slate-200 font-medium">{selectedDeptName}</span>
+          </>
+        )}
       </div>
 
-      {/* ---- Center: Search trigger ---- */}
-      <button
-        className={cn(
-          "hidden md:flex items-center gap-2.5 rounded-xl px-4 py-2 max-w-md w-full",
-          "bg-white/[0.04] border border-white/[0.06] text-slate-500",
-          "hover:bg-white/[0.06] hover:border-white/[0.1] hover:text-slate-400",
-          "transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500/50"
-        )}
-        onClick={() => {
-          /* TODO: open command palette */
-        }}
-      >
-        <Search className="h-4 w-4 shrink-0" />
-        <span className="text-sm flex-1 text-left">Search anything…</span>
-        <kbd
-          className={cn(
-            "ml-auto inline-flex h-5 items-center gap-0.5 rounded-md px-1.5",
-            "bg-white/[0.06] border border-white/[0.06] text-[11px] font-medium text-slate-500"
-          )}
-        >
-          <Command className="h-3 w-3" />K
-        </kbd>
-      </button>
-
-      {/* ---- Right: Notifications + Avatar ---- */}
+      {/* ---- Right: Upgrade Button, Theme Toggle, Map, Search, Profile ---- */}
       <div className="flex items-center gap-2">
-        {/* Notification Bell */}
+        {/* Upgrade Button */}
         <button
-          className={cn(
-            "relative flex h-9 w-9 items-center justify-center rounded-xl",
-            "text-slate-400 hover:text-white hover:bg-white/[0.06]",
-            "transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500/50"
-          )}
-          aria-label="Notifications"
+          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-amber-500/15 border border-amber-500/30 text-amber-300 hover:bg-amber-500/25 transition-all shadow-sm"
+          onClick={() => {
+            if (typeof window !== "undefined") {
+              window.open("/pricing", "_self");
+            }
+          }}
         >
-          <Bell className="h-[18px] w-[18px]" />
-          {notificationCount > 0 && (
-            <span
-              className={cn(
-                "absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1",
-                "bg-gradient-to-r from-violet-500 to-indigo-500 text-[10px] font-bold text-white",
-                "ring-2 ring-[#0a0a0f]"
-              )}
-            >
-              {notificationCount}
-            </span>
-          )}
+          <span>🌻</span>
+          <span>Upgrade</span>
         </button>
 
-        {/* User Dropdown */}
+        {/* Theme Toggle */}
+        <button
+          onClick={toggleTheme}
+          title="Toggle Theme"
+          className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-300 hover:text-white hover:bg-white/[0.08] transition-colors"
+        >
+          {theme === "dark" ? "☀️" : "🌙"}
+        </button>
+
+        {/* Roadmap / Tech Tree Button */}
+        <button
+          onClick={onOpenTechTree}
+          title="How to Build a Company (Tech Tree)"
+          className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-300 hover:text-white hover:bg-white/[0.08] transition-colors"
+        >
+          📖
+        </button>
+
+        {/* Search */}
+        <button
+          className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-300 hover:text-white hover:bg-white/[0.08] transition-colors"
+          title="Search"
+        >
+          <Search className="h-4 w-4" />
+        </button>
+
+        {/* User Avatar Dropdown */}
         <DropdownMenu>
-          <DropdownMenuTrigger
-            className={cn(
-              "flex items-center gap-2 rounded-xl px-2 py-1.5",
-              "hover:bg-white/[0.05] transition-all duration-200 focus:outline-none"
-            )}
-          >
-            <Avatar size="sm" className="ring-1 ring-white/10">
-              <AvatarImage src="/avatar.png" alt="User" />
-              <AvatarFallback className="bg-gradient-to-br from-violet-600 to-indigo-600 text-[10px] text-white">
-                KV
+          <DropdownMenuTrigger className="flex items-center gap-1.5 ml-1 rounded-full focus:outline-none">
+            <Avatar size="sm" className="h-7 w-7 ring-1 ring-white/20">
+              <AvatarFallback className="bg-gradient-to-br from-amber-500 to-amber-700 text-[10px] font-bold text-white">
+                AV
               </AvatarFallback>
             </Avatar>
-            <span className="hidden sm:block text-sm font-medium text-slate-300">
-              Kishore
-            </span>
           </DropdownMenuTrigger>
           <DropdownMenuContent
             side="bottom"
             align="end"
             sideOffset={8}
-            className="w-56 bg-slate-900/95 backdrop-blur-xl border-white/[0.08] shadow-2xl"
+            className="w-56 bg-[#1A1A1F] border-white/10 text-white shadow-2xl"
           >
             <DropdownMenuLabel className="font-normal">
-              <div className="flex flex-col gap-1">
-                <span className="text-sm font-medium text-white">
-                  Kishore V
-                </span>
-                <span className="text-xs text-slate-500">
-                  kishore@automyte.ai
-                </span>
+              <div className="flex flex-col gap-0.5">
+                <span className="text-sm font-medium text-white">Automyte Founder</span>
+                <span className="text-xs text-slate-400">founder@automyte.ai</span>
               </div>
             </DropdownMenuLabel>
-            <DropdownMenuSeparator className="bg-white/[0.06]" />
+            <DropdownMenuSeparator className="bg-white/10" />
             <DropdownMenuGroup>
-              <DropdownMenuItem className="gap-2.5 text-slate-300 focus:text-white focus:bg-white/[0.06]">
-                <User className="h-4 w-4" />
-                Profile
+              <DropdownMenuItem className="gap-2 text-slate-300 focus:text-white focus:bg-white/10 cursor-pointer">
+                <User className="h-4 w-4" /> Profile
               </DropdownMenuItem>
-              <DropdownMenuItem className="gap-2.5 text-slate-300 focus:text-white focus:bg-white/[0.06]">
-                <Settings className="h-4 w-4" />
-                Settings
+              <DropdownMenuItem className="gap-2 text-slate-300 focus:text-white focus:bg-white/10 cursor-pointer">
+                <Settings className="h-4 w-4" /> Settings
               </DropdownMenuItem>
             </DropdownMenuGroup>
-            <DropdownMenuSeparator className="bg-white/[0.06]" />
-            <DropdownMenuItem className="gap-2.5 text-rose-400 focus:text-rose-300 focus:bg-rose-500/10">
-              <LogOut className="h-4 w-4" />
-              Log Out
+            <DropdownMenuSeparator className="bg-white/10" />
+            <DropdownMenuItem className="gap-2 text-rose-400 focus:text-rose-300 focus:bg-rose-500/10 cursor-pointer">
+              <LogOut className="h-4 w-4" /> Log Out
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

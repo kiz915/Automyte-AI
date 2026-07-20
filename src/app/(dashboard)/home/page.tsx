@@ -1,94 +1,310 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
-import type { ApprovalRequest } from "@/types/database";
+import { useState, useEffect, useRef } from "react";
+import { AppHeader } from "@/components/layout/app-header";
+import type { Task, Document, ApprovalRequest, StartupProfile } from "@/types/database";
+import { 
+  Home, 
+  MessageSquare, 
+  Briefcase, 
+  CheckSquare, 
+  FolderOpen, 
+  ChevronRight, 
+  ChevronLeft, 
+  Sparkles,
+  Send,
+  Loader2,
+  FileText,
+  Pin,
+  Folder,
+  ArrowLeft,
+  Download,
+  Save
+} from "lucide-react";
 
-/* ============================================================
-   Home / Canvas — Agent Orchestration Diagram
-   Matches cofounder.co's central orchestrator view
-   Wired to /api/approvals for the Attention Queue
-   ============================================================ */
-
+// Departments meta matching cofounder.co layout
 const departments = [
-  { id: "engineering", label: "Engineering", angle: 0, status: "active", tasks: 3, description: "CI/CD pipeline configured. Ready for staging deploy." },
-  { id: "sales", label: "Sales", angle: 45, status: "idle", tasks: 1, description: "ICP definition in progress. Waiting for competitor data." },
-  { id: "marketing", label: "Marketing", angle: 90, status: "active", tasks: 4, description: "Landing page copy v2 ready for review." },
-  { id: "design", label: "Design", angle: 135, status: "busy", tasks: 2, description: "Brand guidelines document in progress." },
-  { id: "finance", label: "Finance", angle: 180, status: "idle", tasks: 0, description: "No active tasks. Ready for financial planning." },
-  { id: "operations", label: "Operations", angle: 225, status: "idle", tasks: 0, description: "Operational workflows not yet configured." },
-  { id: "legal", label: "Legal", angle: 270, status: "idle", tasks: 0, description: "Legal review pending. Terms of service needed." },
-  { id: "support", label: "Support", angle: 315, status: "idle", tasks: 0, description: "Customer support channels not yet set up." },
+  { id: "engineering", label: "Engineering", angle: 0, status: "active", agentName: "Kai", icon: "⚙", desc: "Kai coordinates code & infrastructure" },
+  { id: "sales", label: "Sales", angle: 45, status: "idle", agentName: "Ryan", icon: "📈", desc: "Ryan automates outreach & pipelines" },
+  { id: "marketing", label: "Marketing", angle: 90, status: "active", agentName: "Aria", icon: "📣", desc: "Aria drives content & growth campaigns" },
+  { id: "design", label: "Design", angle: 135, status: "busy", agentName: "Luna", icon: "🎨", desc: "Luna creates beautiful brands & UI" },
+  { id: "finance", label: "Finance", angle: 180, status: "idle", agentName: "Sam", icon: "💰", desc: "Sam models runway & forecasts growth" },
+  { id: "operations", label: "Operations", angle: 225, status: "idle", agentName: "Devon", icon: "🔧", desc: "Devon automates tools & workflows" },
+  { id: "legal", label: "Legal", angle: 270, status: "idle", agentName: "Morgan", icon: "⚖", desc: "Morgan drafts contracts & compliance" },
+  { id: "support", label: "Support", angle: 315, status: "idle", agentName: "Jamie", icon: "💬", desc: "Jamie handles tickets & client inquiries" },
 ];
 
-function StatusDot({ status }: { status: string }) {
-  const colors: Record<string, string> = {
-    active: "bg-[#22C55E] shadow-[0_0_6px_rgba(34,197,94,0.4)]",
-    busy: "bg-[#F59E0B] shadow-[0_0_6px_rgba(245,158,11,0.4)] animate-pulse",
-    idle: "bg-[rgba(32,32,32,0.2)]",
-  };
-  return <span className={`inline-block w-[6px] h-[6px] rounded-full ${colors[status] || colors.idle}`} />;
+interface ChatMessage {
+  role: "user" | "assistant";
+  content: string;
 }
 
 export default function HomePage() {
   const [hoveredDept, setHoveredDept] = useState<string | null>(null);
-  const [zoomLevel] = useState(100);
-  const [approvals, setApprovals] = useState<ApprovalRequest[]>([]);
-  const [isLoadingApprovals, setIsLoadingApprovals] = useState(true);
+  const [selectedDept, setSelectedDept] = useState<string | null>(null); // Null means global tabs, string means active agent chat
+  const [activeTab, setActiveTab] = useState<"home" | "cofounder" | "company" | "tasks" | "library">("home");
 
-  const cx = 260;
-  const cy = 260;
-  const radius = 190;
+  // Global Data States
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [documents, setDocuments] = useState<Document[]>([]);
+  const [approvals, setApprovals] = useState<ApprovalRequest[]>([]);
+  const [profile, setProfile] = useState<StartupProfile | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  // General Chat & Agent Chat states
+  const [globalChatMessages, setGlobalChatMessages] = useState<ChatMessage[]>([
+    { role: "assistant", content: "Good morning! I'm your CEO orchestrator. What strategic goals are we focusing on today?" }
+  ]);
+  const [globalInput, setGlobalInput] = useState("");
+  const [isGlobalStreaming, setIsGlobalStreaming] = useState(false);
+
+  const [agentChats, setAgentChats] = useState<Record<string, ChatMessage[]>>({});
+  const [agentInput, setAgentInput] = useState("");
+  const [isAgentStreaming, setIsAgentStreaming] = useState(false);
+
+  // Library / Document Editor State
+  const [editingDoc, setEditingDoc] = useState<Document | null>(null);
+  const [docContent, setDocContent] = useState("");
+
+  const chatEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    fetch("/api/approvals?status=pending")
-      .then((res) => res.json())
-      .then((json) => {
-        if (json.data) {
-          setApprovals(json.data);
-        }
-      })
-      .catch((err) => console.error("Failed to fetch approvals:", err))
-      .finally(() => setIsLoadingApprovals(false));
-  }, []);
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [globalChatMessages, agentChats, selectedDept]);
 
-  const handleAction = async (id: string, action: "approved" | "rejected") => {
-    // Optimistic UI update
-    setApprovals((prev) => prev.filter((a) => a.id !== id));
+  useEffect(() => {
+    // Fetch all unified store items
+    Promise.all([
+      fetch("/api/tasks").then((r) => r.json()),
+      fetch("/api/documents").then((r) => r.json()),
+      fetch("/api/approvals").then((r) => r.json()),
+      fetch("/api/startup-profile").then((r) => r.json()),
+    ])
+      .then(([tasksJson, docsJson, approvalsJson, profileJson]) => {
+        if (tasksJson.data) setTasks(tasksJson.data);
+        if (docsJson.data) setDocuments(docsJson.data);
+        if (approvalsJson.data) setApprovals(approvalsJson.data);
+        if (profileJson.data) setProfile(profileJson.data);
+      })
+      .catch((err) => console.error("Error loading store dashboard:", err))
+      .finally(() => setLoading(false));
+  }, [selectedDept, activeTab]);
+
+  const handleGlobalChatSend = async () => {
+    if (!globalInput.trim() || isGlobalStreaming) return;
+    const userMsg = globalInput.trim();
+    setGlobalInput("");
+    setGlobalChatMessages((prev) => [...prev, { role: "user", content: userMsg }]);
+    setIsGlobalStreaming(true);
+
+    setGlobalChatMessages((prev) => [...prev, { role: "assistant", content: "" }]);
 
     try {
-      const res = await fetch(`/api/approvals?id=${id}`, {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: userMsg,
+          executiveRole: "CEO",
+          conversationHistory: globalChatMessages.slice(-5),
+        }),
+      });
+
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+      let assistantResponse = "";
+
+      if (reader) {
+        let done = false;
+        while (!done) {
+          const { value, done: readerDone } = await reader.read();
+          done = readerDone;
+          if (value) {
+            const chunk = decoder.decode(value, { stream: true });
+            const lines = chunk.split("\n\n");
+            for (const line of lines) {
+              if (line.startsWith("data: ")) {
+                const data = line.replace("data: ", "");
+                if (data === "[DONE]") {
+                  done = true;
+                  break;
+                }
+                try {
+                  const parsed = JSON.parse(data);
+                  if (parsed.type === "content") {
+                    assistantResponse += parsed.content;
+                    setGlobalChatMessages((prev) => [
+                      ...prev.slice(0, -1),
+                      { role: "assistant", content: assistantResponse }
+                    ]);
+                  }
+                } catch {}
+              }
+            }
+          }
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsGlobalStreaming(false);
+    }
+  };
+
+  const handleAgentChatSend = async (deptId: string) => {
+    if (!agentInput.trim() || isAgentStreaming) return;
+    const userMsg = agentInput.trim();
+    setAgentInput("");
+
+    const currentHistory = agentChats[deptId] || [
+      { role: "assistant", content: `Hi! I'm ${departments.find((d) => d.id === deptId)?.agentName}, your ${deptId} agent. How can I help?` }
+    ];
+
+    setAgentChats((prev) => ({
+      ...prev,
+      [deptId]: [...currentHistory, { role: "user", content: userMsg }]
+    }));
+    setIsAgentStreaming(true);
+
+    setAgentChats((prev) => ({
+      ...prev,
+      [deptId]: [...(prev[deptId] || []), { role: "assistant", content: "" }]
+    }));
+
+    const capitalizedRole = (deptId.charAt(0).toUpperCase() + deptId.slice(1)) as any;
+
+    try {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: userMsg,
+          executiveRole: capitalizedRole,
+          conversationHistory: currentHistory.slice(-5),
+        }),
+      });
+
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+      let assistantResponse = "";
+
+      if (reader) {
+        let done = false;
+        while (!done) {
+          const { value, done: readerDone } = await reader.read();
+          done = readerDone;
+          if (value) {
+            const chunk = decoder.decode(value, { stream: true });
+            const lines = chunk.split("\n\n");
+            for (const line of lines) {
+              if (line.startsWith("data: ")) {
+                const data = line.replace("data: ", "");
+                if (data === "[DONE]") {
+                  done = true;
+                  break;
+                }
+                try {
+                  const parsed = JSON.parse(data);
+                  if (parsed.type === "content") {
+                    assistantResponse += parsed.content;
+                    setAgentChats((prev) => ({
+                      ...prev,
+                      [deptId]: [
+                        ...prev[deptId].slice(0, -1),
+                        { role: "assistant", content: assistantResponse }
+                      ]
+                    }));
+                  }
+                } catch {}
+              }
+            }
+          }
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsAgentStreaming(false);
+    }
+  };
+
+  const handleAction = async (id: string, action: "approved" | "rejected") => {
+    setApprovals((prev) => prev.filter((a) => a.id !== id));
+    try {
+      await fetch(`/api/approvals?id=${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: action }),
       });
-      if (!res.ok) {
-        throw new Error("Action failed");
-      }
-    } catch (error) {
-      console.error(`Failed to ${action} approval:`, error);
-      // In a real app, we would revert the optimistic update or show a toast here.
+    } catch (err) {
+      console.error(err);
     }
   };
 
+  const handleDownload = (doc: Document) => {
+    const element = document.createElement("a");
+    const file = new Blob([doc.content], { type: 'text/markdown' });
+    element.href = URL.createObjectURL(file);
+    element.download = `${doc.name.toLowerCase().replace(/\s+/g, "_")}.md`;
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  };
+
+  const handleSaveDoc = () => {
+    if (!editingDoc) return;
+    const updated = documents.map((d) => 
+      d.id === editingDoc.id ? { ...d, content: docContent, updated_at: new Date().toISOString() } : d
+    );
+    setDocuments(updated);
+    setEditingDoc(null);
+  };
+
+  // Center Canvas sizing
+  const cx = 240;
+  const cy = 240;
+  const radius = 175;
+
+  // Tech Tree Modal State
+  const [isTechTreeOpen, setIsTechTreeOpen] = useState(false);
+  const [showToast, setShowToast] = useState(true);
+
+  // Check URL query params on mount for open_tech_tree=1
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("open_tech_tree") === "1") {
+        setIsTechTreeOpen(true);
+      }
+    }
+  }, []);
+
+  const selectedDeptObj = departments.find((d) => d.id === selectedDept);
+
   return (
-    <div className="h-[calc(100vh-52px)] flex">
-      {/* Canvas area */}
-      <div className="flex-1 relative overflow-hidden">
-        {/* Zoom indicator */}
-        <div className="absolute top-4 left-4 z-10 flex items-center gap-1.5">
-          <span className="mono text-[10px] text-ink-muted">Z</span>
-          <span className="text-[10px] font-medium text-ink-faint">{zoomLevel}%</span>
-        </div>
+    <div className="flex flex-col h-screen bg-[#111115] text-white font-sans select-none overflow-hidden">
+      {/* Top Navigation Header */}
+      <AppHeader 
+        selectedDeptName={selectedDeptObj ? selectedDeptObj.label : null}
+        onOpenTechTree={() => setIsTechTreeOpen(true)}
+      />
 
-        {/* Orchestration canvas */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="relative w-full max-w-[560px] aspect-square">
-            <svg viewBox="0 0 520 520" className="w-full h-full" fill="none">
-              {/* Outer orbit circle */}
-              <circle cx={cx} cy={cy} r={radius} stroke="rgba(0,0,0,0.08)" strokeWidth="1" />
+      <div className="flex-1 flex overflow-hidden relative">
+        {/* Left Pane — Interactive Orchestrator Canvas */}
+        <div className="flex-1 relative flex items-center justify-center border-r border-white/[0.08] bg-[#141419]">
+          <div className="absolute top-4 left-4 flex items-center gap-1.5 bg-white/[0.05] px-2.5 py-1 rounded-md border border-white/[0.08]">
+            <span className="mono text-[10px] text-slate-400">Z</span>
+            <span className="text-[10px] font-medium text-slate-200">100%</span>
+          </div>
 
-              {/* Dashed connector lines + nodes */}
+          {/* SVG Diagram Canvas */}
+          <div className="relative w-full max-w-[500px] aspect-square">
+            <svg viewBox="0 0 480 480" className="w-full h-full" fill="none">
+              {/* Outer ring */}
+              <circle cx={cx} cy={cy} r={radius} stroke="rgba(255,255,255,0.08)" strokeWidth="1" strokeDasharray="3 3" />
+              
+              {/* Connections & Nodes */}
               {departments.map((dept) => {
                 const rad = (dept.angle * Math.PI) / 180;
                 const outerX = cx + radius * Math.cos(rad - Math.PI / 2);
@@ -96,167 +312,597 @@ export default function HomePage() {
                 const innerX = cx + 55 * Math.cos(rad - Math.PI / 2);
                 const innerY = cy + 55 * Math.sin(rad - Math.PI / 2);
                 const isHovered = hoveredDept === dept.id;
-                const labelRadius = radius + 36;
-                const lx = cx + labelRadius * Math.cos(rad - Math.PI / 2);
-                const ly = cy + labelRadius * Math.sin(rad - Math.PI / 2);
+                const isSelected = selectedDept === dept.id;
 
                 return (
                   <g key={dept.id}>
-                    {/* Dashed line */}
                     <line
                       x1={innerX} y1={innerY}
                       x2={outerX} y2={outerY}
-                      stroke={isHovered ? "rgba(32,32,32,0.25)" : "rgba(32,32,32,0.08)"}
-                      strokeWidth="1.1"
-                      strokeLinecap="round"
-                      strokeDasharray="4.5 4.5"
-                      className="transition-all duration-200"
+                      stroke={isSelected ? "#F2B705" : isHovered ? "rgba(242,183,5,0.4)" : "rgba(255,255,255,0.12)"}
+                      strokeWidth={isSelected ? "1.8" : "1"}
+                      strokeDasharray="4 4"
+                      className="transition-all duration-300"
                     />
-                    {/* Inner dot */}
-                    <circle cx={innerX} cy={innerY} r="2.5" fill="#F5F5F2" stroke="rgba(0,0,0,0.1)" strokeWidth="0.5" />
-                    {/* Outer node (clickable) */}
-                    <a href={`/dept/${dept.id}`}>
-                      <circle
-                        cx={outerX} cy={outerY}
-                        r={isHovered ? "18" : "14"}
-                        fill={isHovered ? "#FBFBF8" : "#F5F5F2"}
-                        stroke={isHovered ? "rgba(32,32,32,0.2)" : "rgba(0,0,0,0.08)"}
-                        strokeWidth={isHovered ? "1.5" : "1"}
-                        className="transition-all duration-200 cursor-pointer"
-                        onMouseEnter={() => setHoveredDept(dept.id)}
-                        onMouseLeave={() => setHoveredDept(null)}
-                      />
-                    </a>
-                    {/* Status dot on node */}
-                    <circle
-                      cx={outerX + 9} cy={outerY - 9}
-                      r="3"
-                      fill={dept.status === "active" ? "#22C55E" : dept.status === "busy" ? "#F59E0B" : "rgba(32,32,32,0.15)"}
-                      stroke="#F5F5F2"
-                      strokeWidth="1.5"
+                    <circle 
+                      cx={outerX} cy={outerY} 
+                      r={isSelected ? "16" : isHovered ? "13" : "11"}
+                      fill={isSelected ? "#24242D" : isHovered ? "#1E1E26" : "#181820"}
+                      stroke={isSelected ? "#F2B705" : isHovered ? "rgba(242,183,5,0.6)" : "rgba(255,255,255,0.2)"}
+                      strokeWidth={isSelected ? "2" : "1"}
+                      onClick={() => setSelectedDept(dept.id)}
+                      onMouseEnter={() => setHoveredDept(dept.id)}
+                      onMouseLeave={() => setHoveredDept(null)}
+                      className="cursor-pointer transition-all duration-300"
                     />
-                    {/* Department label */}
+                    {/* Icon in node */}
                     <text
-                      x={lx} y={ly}
+                      x={outerX} y={outerY + 3.5}
+                      textAnchor="middle"
+                      fontSize={isSelected ? "12" : "10"}
+                      className="pointer-events-none select-none"
+                    >
+                      {dept.icon}
+                    </text>
+                    {/* Status indicator on node */}
+                    <circle
+                      cx={outerX + 8} cy={outerY - 8}
+                      r="3"
+                      fill={dept.status === "active" ? "#22C55E" : dept.status === "busy" ? "#F59E0B" : "rgba(255,255,255,0.3)"}
+                      stroke="#141419"
+                      strokeWidth="1"
+                    />
+                    {/* Text labels outside */}
+                    <text
+                      x={cx + (radius + 32) * Math.cos(rad - Math.PI / 2)}
+                      y={cy + (radius + 32) * Math.sin(rad - Math.PI / 2)}
                       textAnchor="middle"
                       dominantBaseline="central"
-                      fontSize="11"
-                      fontWeight={isHovered ? "600" : "480"}
-                      fill={isHovered ? "rgba(32,32,32,0.8)" : "rgba(32,32,32,0.45)"}
-                      className="transition-all duration-200 pointer-events-none select-none"
+                      fontSize="10.5"
+                      fontWeight={isSelected ? "600" : isHovered ? "550" : "480"}
+                      fill={isSelected ? "#F2B705" : "rgba(255,255,255,0.7)"}
+                      className="pointer-events-none select-none transition-colors duration-300"
                     >
                       {dept.label}
                     </text>
-                    {/* Task count badge */}
-                    {dept.tasks > 0 && (
-                      <g>
-                        <rect
-                          x={lx - 8} y={ly + 8}
-                          width="16" height="14"
-                          rx="3"
-                          fill="rgba(32,32,32,0.06)"
-                          className="pointer-events-none"
-                        />
-                        <text
-                          x={lx} y={ly + 16}
-                          textAnchor="middle"
-                          dominantBaseline="central"
-                          fontSize="8"
-                          fontWeight="500"
-                          fill="rgba(32,32,32,0.5)"
-                          className="pointer-events-none select-none"
-                        >
-                          {dept.tasks}
-                        </text>
-                      </g>
-                    )}
                   </g>
                 );
               })}
 
-              {/* Center orchestrator */}
-              <circle cx={cx} cy={cy} r="52" fill="#FFFFFF" stroke="rgba(0,0,0,0.08)" strokeWidth="1" />
-              <circle cx={cx} cy={cy} r="42" fill="#FBFBF8" stroke="rgba(0,0,0,0.05)" strokeWidth="0.5" />
-              <text x={cx} y={cy - 6} textAnchor="middle" fontSize="10" fontWeight="600" fill="rgba(32,32,32,0.75)" letterSpacing="0.08em">AUTOMYTE</text>
-              <text x={cx} y={cy + 8} textAnchor="middle" fontSize="7.5" fontWeight="420" fill="rgba(32,32,32,0.35)" letterSpacing="0.04em">ORCHESTRATOR</text>
+              {/* Central Orchestrator core with Pixel Sunflower icon */}
+              <circle 
+                cx={cx} cy={cy} r="46" 
+                fill="#1C1C24" 
+                stroke={selectedDept === null ? "#F2B705" : "rgba(255,255,255,0.15)"} 
+                strokeWidth="1.5" 
+                onClick={() => setSelectedDept(null)}
+                className="cursor-pointer hover:stroke-amber-400 transition-all shadow-xl"
+              />
+              <text x={cx} y={cy - 8} textAnchor="middle" fontSize="16" className="pointer-events-none">🌻</text>
+              <text x={cx} y={cy + 8} textAnchor="middle" fontSize="9" fontWeight="700" fill="#FFFFFF" letterSpacing="0.06em">AUTOMYTE</text>
+              <text x={cx} y={cy + 18} textAnchor="middle" fontSize="7.5" fontWeight="450" fill="rgba(255,255,255,0.5)" letterSpacing="0.04em">COFOUNDER</text>
             </svg>
           </div>
-        </div>
-      </div>
 
-      {/* Right panel — attention queue */}
-      <div className="w-[340px] border-l border-border-subtle bg-surface-card overflow-y-auto hidden lg:flex flex-col">
-        <div className="px-4 pt-4 pb-3 border-b border-border-subtle">
-          <h2 className="text-[14px] font-[560] text-ink">Attention Queue</h2>
-          <p className="text-[12px] text-ink-muted mt-0.5">Items that need your review</p>
-        </div>
+          {/* Floating Bottom Left Notification Bell */}
+          <button 
+            className="absolute bottom-5 left-5 w-10 h-10 rounded-xl bg-[#1C1C24] border border-white/10 flex items-center justify-center text-slate-300 hover:text-white hover:bg-[#252530] transition-colors shadow-lg"
+            title="Notifications"
+          >
+            🔔
+          </button>
 
-        {/* Attention items */}
-        <div className="flex-1 px-3 py-2 space-y-1.5">
-          {isLoadingApprovals ? (
-            <div className="p-4 text-center text-[12px] text-ink-faint">Loading queue...</div>
-          ) : approvals.length === 0 ? (
-            <div className="p-4 text-center text-[12px] text-ink-faint">
-              All caught up! No pending approvals.
-            </div>
-          ) : (
-            approvals.map((approval) => {
-              const executive = (approval.payload?.executive as string) || "System";
-              const riskLevel = (approval.payload?.risk_level as string) || "low";
-              
-              const isHighRisk = riskLevel === "high";
-              const isMediumRisk = riskLevel === "medium";
-              
-              return (
-                <div key={approval.id} className="surface-card rounded-[10px] p-3.5 border-border-subtle">
-                  <div className="flex items-center gap-2 mb-2">
-                    <StatusDot status={isHighRisk ? "busy" : isMediumRisk ? "active" : "idle"} />
-                    <span className="text-[11px] font-[520] text-ink-faint uppercase tracking-wider">
-                      {isHighRisk ? "Critical Approval" : "Approval"}
-                    </span>
-                  </div>
-                  <p className="text-[13px] font-[500] text-ink mb-1">{approval.requested_action}</p>
-                  <p className="text-[12px] text-ink-faint leading-relaxed mb-3">
-                    {executive} agent requests approval to proceed with this action.
-                  </p>
-                  <div className="flex items-center gap-2">
-                    <button 
-                      onClick={() => handleAction(approval.id, "approved")}
-                      className="flex-1 h-[30px] rounded-[6px] text-[12px] font-[500] cursor-pointer bg-ink text-ink-inverted hover:bg-[#333] transition-colors border-0"
-                    >
-                      Approve
-                    </button>
-                    <button 
-                      onClick={() => handleAction(approval.id, "rejected")}
-                      className="flex-1 h-[30px] rounded-[6px] text-[12px] font-[500] cursor-pointer border border-border text-ink-secondary hover:bg-surface transition-colors bg-transparent"
-                    >
-                      Reject
-                    </button>
-                  </div>
+          {/* Floating Bottom Center Plus Button */}
+          <button 
+            onClick={() => setIsTechTreeOpen(true)}
+            className="absolute bottom-5 left-1/2 -translate-x-1/2 w-10 h-10 rounded-xl bg-amber-500 text-slate-950 font-extrabold flex items-center justify-center hover:bg-amber-400 transition-colors shadow-lg"
+            title="Add Node / Launch Task"
+          >
+            +
+          </button>
+
+          {/* Floating Bottom Left Toast Popup */}
+          {showToast && (
+            <div className="absolute bottom-16 left-5 max-w-xs bg-[#1A1A22] border border-white/10 p-3.5 rounded-xl shadow-2xl space-y-2 text-xs">
+              <div className="flex items-center justify-between">
+                <span className="font-bold text-amber-400">New Models Are Live</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] text-slate-400">v1.0.16</span>
+                  <button onClick={() => setShowToast(false)} className="text-slate-400 hover:text-white">✕</button>
                 </div>
-              );
-            })
+              </div>
+              <p className="text-slate-300 text-[11px] leading-relaxed">
+                Grok 4.5, GPT-5.6 Sol, GPT-5.6 Terra, and Muse Spark 1.1 are now available in Automyte.
+              </p>
+              <button 
+                onClick={() => setIsTechTreeOpen(true)}
+                className="w-full py-1.5 rounded-lg bg-white/10 hover:bg-white/15 text-white font-medium text-[11px] transition-colors"
+              >
+                See what's new
+              </button>
+            </div>
           )}
         </div>
 
-        {/* Bottom stats */}
-        <div className="px-4 py-3 border-t border-border-subtle">
-          <div className="grid grid-cols-3 gap-3">
-            <div>
-              <p className="mono text-[10px] text-ink-muted uppercase">Tasks</p>
-              <p className="text-[16px] font-[600] text-ink">10</p>
+        {/* Right Pane — Dynamic Tabbed / Agent Workspace Panel */}
+        <div className="w-[480px] bg-[#16161C] border-l border-white/[0.08] flex flex-col overflow-hidden shadow-2xl">
+          {selectedDept ? (
+            /* DEPARTMENT CHAT PANEL WORKSPACE */
+            <div className="flex-1 flex flex-col overflow-hidden">
+              {/* Header */}
+              <div className="px-5 py-4 border-b border-white/10 flex items-center justify-between bg-[#1A1A22]">
+                <div className="flex items-center gap-2.5">
+                  <span className="text-xl">{departments.find(d => d.id === selectedDept)?.icon}</span>
+                  <div>
+                    <h2 className="text-sm font-bold text-white flex items-center gap-1.5">
+                      {departments.find(d => d.id === selectedDept)?.label} Agent
+                    </h2>
+                    <p className="text-xs text-slate-400">
+                      Speaking with {departments.find(d => d.id === selectedDept)?.agentName}
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setSelectedDept(null)}
+                  className="text-xs font-semibold text-slate-400 hover:text-white cursor-pointer border-0 bg-transparent flex items-center gap-1"
+                >
+                  <ChevronLeft className="w-4 h-4" /> Back
+                </button>
+              </div>
+
+              {/* Chat Messages */}
+              <div className="flex-1 overflow-y-auto p-5 space-y-4">
+                {(agentChats[selectedDept] || [
+                  { role: "assistant", content: `Hi! I'm ${departments.find((d) => d.id === selectedDept)?.agentName}, your ${departments.find((d) => d.id === selectedDept)?.label} executive. Let me know what operational task we should launch.` }
+                ]).map((msg, index) => (
+                  <div key={index} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
+                    <div className={`max-w-[360px] px-4 py-3 rounded-2xl text-xs leading-relaxed ${
+                      msg.role === "user" ? "bg-amber-500 text-slate-950 font-medium rounded-br-none" : "bg-[#20202A] border border-white/10 text-slate-200 rounded-bl-none"
+                    }`}>
+                      {msg.content}
+                      {msg.role === "assistant" && msg.content === "" && isAgentStreaming && (
+                        <Loader2 className="w-4 h-4 animate-spin text-slate-400" />
+                      )}
+                    </div>
+                  </div>
+                ))}
+                <div ref={chatEndRef} />
+              </div>
+
+              {/* Chat Input */}
+              <div className="p-4 border-t border-white/10 bg-[#1A1A22]">
+                <div className="flex items-center gap-2 border border-white/10 bg-[#22222C] rounded-xl p-2 focus-within:border-amber-500/50">
+                  <input
+                    type="text"
+                    value={agentInput}
+                    onChange={(e) => setAgentInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") handleAgentChatSend(selectedDept);
+                    }}
+                    placeholder={`Instruct ${departments.find(d => d.id === selectedDept)?.agentName}...`}
+                    className="flex-1 border-0 bg-transparent focus:outline-none text-xs text-white px-2 py-1 placeholder-slate-500"
+                  />
+                  <button
+                    onClick={() => handleAgentChatSend(selectedDept)}
+                    disabled={!agentInput.trim() || isAgentStreaming}
+                    className="h-8 w-8 rounded-lg bg-amber-500 text-slate-950 font-bold flex items-center justify-center cursor-pointer border-0 disabled:opacity-30"
+                  >
+                    <Send className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
             </div>
-            <div>
-              <p className="mono text-[10px] text-ink-muted uppercase">Pending</p>
-              <p className="text-[16px] font-[600] text-[#F59E0B]">{approvals.length}</p>
+            
+          ) : (
+            
+            /* GLOBAL WORKSPACE TABS PANEL */
+            <div className="flex-1 flex flex-col overflow-hidden">
+              {/* Unified Tabs Header */}
+              <div className="flex border-b border-white/10 bg-[#1A1A22] px-3 pt-2 gap-1 select-none">
+                {[
+                  { id: "home", label: "Home", icon: <Home className="w-3.5 h-3.5" /> },
+                  { id: "cofounder", label: "Cofounder", icon: <MessageSquare className="w-3.5 h-3.5" /> },
+                  { id: "company", label: "Company", icon: <Briefcase className="w-3.5 h-3.5" /> },
+                  { id: "tasks", label: "Tasks", icon: <CheckSquare className="w-3.5 h-3.5" /> },
+                  { id: "library", label: "Library", icon: <FolderOpen className="w-3.5 h-3.5" /> },
+                ].map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => {
+                      setActiveTab(tab.id as any);
+                      setEditingDoc(null);
+                    }}
+                    className={`px-3 py-2.5 text-xs font-semibold flex items-center gap-1.5 border-b-2 transition-all cursor-pointer border-0 bg-transparent ${
+                      activeTab === tab.id 
+                        ? "border-amber-400 text-white font-bold" 
+                        : "border-transparent text-slate-400 hover:text-slate-200"
+                    }`}
+                  >
+                    {tab.icon}
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* TAB CONTENT: HOME */}
+              {activeTab === "home" && (
+                <div className="flex-1 overflow-y-auto p-5 space-y-6">
+                  <div>
+                    <h1 className="text-lg font-serif font-semibold text-white">Good morning, Automyte</h1>
+                    <p className="text-xs text-slate-400">Welcome back to your operational control center</p>
+                  </div>
+
+                  {/* Automyte Roadmap Card */}
+                  <div 
+                    onClick={() => setIsTechTreeOpen(true)}
+                    className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-900/60 to-purple-900/60 border border-white/10 p-5 cursor-pointer hover:border-amber-500/50 transition-all shadow-xl group"
+                  >
+                    <div className="flex items-center justify-between text-xs font-medium text-white mb-3">
+                      <span className="font-bold tracking-wide">Automyte Roadmap</span>
+                      <span className="text-amber-400 font-bold group-hover:translate-x-1 transition-transform">9% &gt;</span>
+                    </div>
+                    <div className="h-2 w-full bg-black/40 rounded-full overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-amber-500 to-amber-300 rounded-full" style={{ width: "9%" }} />
+                    </div>
+                  </div>
+
+                  {/* Suggested Checklist */}
+                  <div className="space-y-3">
+                    <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Suggested Next</h3>
+                    <div className="space-y-2">
+                      {[
+                        { label: "App is started", status: "completed" },
+                        { label: "Build marketing website", status: "todo" },
+                        { label: "Sales positioning is ready", status: "todo" },
+                        { label: "Brand identity configuration", status: "completed" },
+                        { label: "Setup social presence campaigns", status: "todo" }
+                      ].map((item, idx) => (
+                        <div key={idx} className="flex items-center justify-between bg-[#20202A] border border-white/10 rounded-xl p-3.5 shadow-sm">
+                          <div className="flex items-center gap-3">
+                            <input 
+                              type="checkbox" 
+                              checked={item.status === "completed"} 
+                              className="w-4 h-4 accent-amber-500 rounded cursor-pointer"
+                              readOnly 
+                            />
+                            <span className={`text-xs font-medium ${item.status === "completed" ? "text-slate-500 line-through" : "text-slate-200"}`}>
+                              {item.label}
+                            </span>
+                          </div>
+                          <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded ${
+                            item.status === "completed" ? "text-emerald-400 bg-emerald-500/10" : "text-slate-400 bg-white/5"
+                          }`}>
+                            {item.status}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Approvals Attention List */}
+                  {approvals.length > 0 && (
+                    <div className="space-y-3 pt-2">
+                      <h3 className="text-xs font-bold text-amber-400 uppercase tracking-wider">Requires Approval</h3>
+                      <div className="space-y-2">
+                        {approvals.map((app) => (
+                          <div key={app.id} className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 space-y-3">
+                            <h4 className="text-xs font-semibold text-white">{app.requested_action}</h4>
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => handleAction(app.id, "approved")}
+                                className="flex-1 h-8 rounded-lg bg-amber-500 text-slate-950 font-bold text-xs hover:bg-amber-400 transition-colors cursor-pointer border-0"
+                              >
+                                Approve
+                              </button>
+                              <button
+                                onClick={() => handleAction(app.id, "rejected")}
+                                className="flex-1 h-8 rounded-lg border border-white/10 text-xs font-semibold text-slate-300 bg-transparent hover:bg-white/5 cursor-pointer"
+                              >
+                                Reject
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* TAB CONTENT: COFOUNDER (GENERAL CHAT) */}
+              {activeTab === "cofounder" && (
+                <div className="flex-1 flex flex-col overflow-hidden">
+                  <div className="flex-1 overflow-y-auto p-5 space-y-4">
+                    {globalChatMessages.map((msg, index) => (
+                      <div key={index} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
+                        <div className={`max-w-[360px] px-4 py-3 rounded-2xl text-xs leading-relaxed ${
+                          msg.role === "user" ? "bg-amber-500 text-slate-950 font-medium rounded-br-none" : "bg-[#20202A] border border-white/10 text-slate-200 rounded-bl-none"
+                        }`}>
+                          {msg.content}
+                          {msg.role === "assistant" && msg.content === "" && isGlobalStreaming && (
+                            <Loader2 className="w-4 h-4 animate-spin text-slate-400" />
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                    <div ref={chatEndRef} />
+                  </div>
+
+                  <div className="p-4 border-t border-white/10 bg-[#1A1A22]">
+                    <div className="flex items-center gap-2 border border-white/10 bg-[#22222C] rounded-xl p-2 focus-within:border-amber-500/50">
+                      <input
+                        type="text"
+                        value={globalInput}
+                        onChange={(e) => setGlobalInput(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") handleGlobalChatSend();
+                        }}
+                        placeholder="Ask Cofounder anything about your company..."
+                        className="flex-1 border-0 bg-transparent focus:outline-none text-xs text-white px-2 py-1 placeholder-slate-500"
+                      />
+                      <button
+                        onClick={handleGlobalChatSend}
+                        disabled={!globalInput.trim() || isGlobalStreaming}
+                        className="h-8 w-8 rounded-lg bg-amber-500 text-slate-950 font-bold flex items-center justify-center cursor-pointer border-0 disabled:opacity-30"
+                      >
+                        <Send className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* TAB CONTENT: COMPANY PROFILE */}
+              {activeTab === "company" && (
+                <div className="flex-1 overflow-y-auto p-5 space-y-6">
+                  <div>
+                    <h1 className="text-lg font-semibold text-white">Company Briefing</h1>
+                    <p className="text-xs text-slate-400">The core values and context guiding your virtual team</p>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div>
+                      <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Vision</h3>
+                      <p className="text-xs text-slate-300 leading-relaxed bg-[#20202A] p-3.5 rounded-xl border border-white/10">
+                        {profile?.vision_mission || "Vision parameters not yet established."}
+                      </p>
+                    </div>
+                    <div>
+                      <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Target Audience</h3>
+                      <p className="text-xs text-slate-300 leading-relaxed bg-[#20202A] p-3.5 rounded-xl border border-white/10">
+                        {profile?.target_audience || "No target audience defined."}
+                      </p>
+                    </div>
+                    <div>
+                      <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Business Model</h3>
+                      <p className="text-xs text-slate-300 leading-relaxed bg-[#20202A] p-3.5 rounded-xl border border-white/10">
+                        {profile?.business_model || "No model structured."}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* TAB CONTENT: TASKS */}
+              {activeTab === "tasks" && (
+                <div className="flex-1 overflow-y-auto p-5 space-y-4">
+                  <div>
+                    <h1 className="text-lg font-semibold text-white">Tasks</h1>
+                    <p className="text-xs text-slate-400">Current action logs from backend processes</p>
+                  </div>
+
+                  <div className="space-y-2">
+                    {tasks.map((task) => (
+                      <div key={task.id} className="bg-[#20202A] border border-white/10 rounded-xl p-4 flex items-start justify-between shadow-sm">
+                        <div className="space-y-1 pr-4 min-w-0">
+                          <h3 className="text-xs font-bold text-white truncate">{task.title}</h3>
+                          <p className="text-[11px] text-slate-400 line-clamp-2 leading-relaxed">{task.description}</p>
+                        </div>
+                        <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded shrink-0 ${
+                          task.status === "done" ? "text-emerald-400 bg-emerald-500/10" : "text-slate-400 bg-white/5"
+                        }`}>
+                          {task.status}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* TAB CONTENT: LIBRARY (DOCUMENTS) */}
+              {activeTab === "library" && (
+                <div className="flex-1 overflow-y-auto p-5">
+                  {editingDoc ? (
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between border-b border-white/10 pb-3 mb-2">
+                        <button 
+                          onClick={() => setEditingDoc(null)}
+                          className="text-xs font-semibold text-slate-400 hover:text-white cursor-pointer bg-transparent border-0 flex items-center gap-1"
+                        >
+                          <ChevronLeft className="w-4 h-4" /> Back
+                        </button>
+                        <button
+                          onClick={handleSaveDoc}
+                          className="h-8 px-4 rounded-lg bg-amber-500 text-slate-950 font-bold text-xs hover:bg-amber-400 transition-colors cursor-pointer border-0"
+                        >
+                          Save
+                        </button>
+                      </div>
+                      <h3 className="text-sm font-bold text-white">{editingDoc.name}</h3>
+                      <textarea
+                        value={docContent}
+                        onChange={(e) => setDocContent(e.target.value)}
+                        className="w-full h-64 p-3.5 rounded-xl border border-white/10 bg-[#121217] text-xs font-mono text-slate-200 focus:outline-none resize-none"
+                      />
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <div>
+                        <h1 className="text-lg font-semibold text-white">Asset Library</h1>
+                        <p className="text-xs text-slate-400">Click documents to view or edit</p>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-3">
+                        {documents.map((doc) => (
+                          <div
+                            key={doc.id}
+                            onClick={() => {
+                              setEditingDoc(doc);
+                              setDocContent(doc.content || "");
+                            }}
+                            className="bg-[#20202A] border border-white/10 rounded-xl p-4 hover:border-amber-500/50 shadow-sm cursor-pointer space-y-3 transition-all"
+                          >
+                            <div className="p-2 bg-white/5 rounded-lg w-fit">
+                              <FileText className="w-4 h-4 text-amber-400" />
+                            </div>
+                            <h3 className="text-xs font-bold text-white truncate">{doc.name}</h3>
+                            <p className="text-[10px] text-slate-400 uppercase font-semibold">{doc.folder}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
-            <div>
-              <p className="mono text-[10px] text-ink-muted uppercase">Done</p>
-              <p className="text-[16px] font-[600] text-[#22C55E]">7</p>
+          )}
+        </div>
+      </div>
+
+      {/* TECH TREE MODAL ("How to Build a Company") */}
+      {isTechTreeOpen && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-6 animate-in fade-in duration-200">
+          <div className="bg-[#181820] border border-white/10 rounded-3xl w-full max-w-6xl h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+            {/* Modal Header */}
+            <div className="px-6 py-4 border-b border-white/10 flex items-center justify-between bg-[#1C1C26]">
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">📁</span>
+                <div>
+                  <h2 className="text-base font-bold text-white">How to Build a Company</h2>
+                  <p className="text-xs text-slate-400">Automyte Operational Tech Tree</p>
+                </div>
+              </div>
+              <button 
+                onClick={() => setIsTechTreeOpen(false)}
+                className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors text-sm font-bold"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Modal Tech Tree Grid Content */}
+            <div className="flex-1 overflow-x-auto p-6 bg-[#131318] flex gap-6">
+              {/* STAGE 1: IDENTITY STAGE */}
+              <div className="w-64 shrink-0 flex flex-col gap-3">
+                <div className="flex items-center justify-between text-xs font-bold text-slate-400 uppercase pb-2 border-b border-white/10">
+                  <span>IDENTITY STAGE</span>
+                  <span className="text-amber-400">0/5</span>
+                </div>
+                {[
+                  { title: "Brand identity", tag: "Available", desc: "Agent can do this", status: "available" },
+                  { title: "Buy domain", tag: "Available", desc: "Needs your input", status: "input" },
+                  { title: "Setup social presence", tag: "Available", desc: "Needs your input", status: "input" },
+                  { title: "Define positioning", tag: "Available", desc: "Needs approval", status: "approval" }
+                ].map((item, i) => (
+                  <div key={i} className="bg-[#1E1E28] border border-white/10 p-4 rounded-xl space-y-2 hover:border-amber-500/50 cursor-pointer transition-all">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-white">{item.title}</span>
+                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300">{item.tag}</span>
+                    </div>
+                    <p className="text-[11px] text-slate-400">{item.desc}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* STAGE 2: BUILD STAGE */}
+              <div className="w-64 shrink-0 flex flex-col gap-3">
+                <div className="flex items-center justify-between text-xs font-bold text-slate-400 uppercase pb-2 border-b border-white/10">
+                  <span>BUILD STAGE</span>
+                  <span className="text-amber-400">0/8</span>
+                </div>
+                {[
+                  { title: "Build app", tag: "Available", desc: "Agent can do this", status: "available" },
+                  { title: "Add auth", tag: "Locked", desc: "Needs earlier steps first", status: "locked" },
+                  { title: "Set up transactional email", tag: "Locked", desc: "Needs earlier steps first", status: "locked" },
+                  { title: "Build marketing website", tag: "Available", desc: "Agent can do this", status: "available" },
+                  { title: "Setup outbound email", tag: "Locked", desc: "Needs earlier steps first", status: "locked" }
+                ].map((item, i) => (
+                  <div key={i} className={`p-4 rounded-xl border space-y-2 transition-all ${
+                    item.status === "available" 
+                      ? "bg-[#1E1E28] border-white/10 hover:border-amber-500/50 cursor-pointer" 
+                      : "bg-[#181820] border-white/5 opacity-60"
+                  }`}>
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-white">{item.title}</span>
+                      <span className={`text-[10px] font-semibold px-2 py-0.5 rounded ${
+                        item.status === "available" ? "bg-indigo-500/20 text-indigo-300" : "bg-white/5 text-slate-500"
+                      }`}>{item.tag}</span>
+                    </div>
+                    <p className="text-[11px] text-slate-400">{item.desc}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* STAGE 3: GTM STAGE */}
+              <div className="w-64 shrink-0 flex flex-col gap-3">
+                <div className="flex items-center justify-between text-xs font-bold text-slate-400 uppercase pb-2 border-b border-white/10">
+                  <span>GTM STAGE</span>
+                  <span className="text-amber-400">0/4</span>
+                </div>
+                {[
+                  { title: "Write blog posts", desc: "Needs earlier steps first" },
+                  { title: "Grow social presence", desc: "Needs earlier steps first" },
+                  { title: "Send cold outreach", desc: "Needs earlier steps first" },
+                  { title: "Run paid acquisition", desc: "Needs earlier steps first" }
+                ].map((item, i) => (
+                  <div key={i} className="bg-[#181820] border border-white/5 p-4 rounded-xl space-y-2 opacity-50">
+                    <span className="text-xs font-bold text-white block">{item.title}</span>
+                    <p className="text-[11px] text-slate-500">{item.desc}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* STAGE 4: LAUNCH STAGE */}
+              <div className="w-64 shrink-0 flex flex-col gap-3">
+                <div className="flex items-center justify-between text-xs font-bold text-slate-400 uppercase pb-2 border-b border-white/10">
+                  <span>LAUNCH STAGE</span>
+                  <span className="text-amber-400">0/4</span>
+                </div>
+                {[
+                  { title: "Launch app", desc: "Needs earlier steps first" },
+                  { title: "Expand content engine", desc: "Needs earlier steps first" },
+                  { title: "Launch marketing website", desc: "Needs earlier steps first" },
+                  { title: "Qualify opportunities", desc: "Needs earlier steps first" }
+                ].map((item, i) => (
+                  <div key={i} className="bg-[#181820] border border-white/5 p-4 rounded-xl space-y-2 opacity-50">
+                    <span className="text-xs font-bold text-white block">{item.title}</span>
+                    <p className="text-[11px] text-slate-500">{item.desc}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* STAGE 5: SCALE STAGE */}
+              <div className="w-64 shrink-0 flex flex-col gap-3">
+                <div className="flex items-center justify-between text-xs font-bold text-slate-400 uppercase pb-2 border-b border-white/10">
+                  <span>SCALE STAGE</span>
+                  <span className="text-amber-400">0/7</span>
+                </div>
+                {[
+                  { title: "Add monitoring", desc: "Needs earlier steps first" },
+                  { title: "Optimize SEO", desc: "Needs earlier steps first" },
+                  { title: "Start community", desc: "Needs earlier steps first" },
+                  { title: "Close deals", desc: "Needs earlier steps first" }
+                ].map((item, i) => (
+                  <div key={i} className="bg-[#181820] border border-white/5 p-4 rounded-xl space-y-2 opacity-50">
+                    <span className="text-xs font-bold text-white block">{item.title}</span>
+                    <p className="text-[11px] text-slate-500">{item.desc}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
