@@ -1,13 +1,26 @@
 "use client";
 
 import Link from "next/link";
-import { useParams, notFound } from "next/navigation";
+import { useParams, notFound, redirect } from "next/navigation";
 import { resourcesData, ResourceArticle } from "@/lib/resources-data";
 import { ArrowLeft, ArrowRight, Sparkles, CheckCircle2, Share2 } from "lucide-react";
+
+const legacyRedirects: Record<string, string> = {
+  "introducing-cofounder-2": "introducing-automyte-2",
+  "an-update-on-cofounder-1": "an-update-on-automyte-1",
+  "cofounder-1-5-seed-round": "automyte-1-5-seed-round",
+  "cofounder-partners-with-ramp-to-offer-incorporation": "automyte-partners-with-ledgerly-to-offer-incorporation",
+  "yohei-nakajima-activegraph-cofounder": "alex-mercer-activegraph-automyte",
+  "daria-ansh-veery-safer-cosmetic-dentistry": "elena-rostova-dentalflow-case-study",
+};
 
 export default function ResourceArticlePage() {
   const params = useParams();
   const slug = params.slug as string;
+
+  if (legacyRedirects[slug]) {
+    redirect(`/resources/${legacyRedirects[slug]}`);
+  }
 
   const article = resourcesData.find((a) => a.slug === slug);
 

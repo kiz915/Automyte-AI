@@ -54,7 +54,7 @@ const howToSteps = [
   },
 ];
 
-const socialProofCompanies = ["ActiveGraph", "Veery", "LearnPath", "Valence OS", "Acumen", "Kore Labs"];
+const socialProofCompanies = ["ActiveGraph", "DentalFlow", "LearnPath", "Valence OS", "Acumen", "Kore Labs"];
 
 export default function LandingPage() {
   const [activeStep, setActiveStep] = useState(0);
@@ -153,7 +153,7 @@ export default function LandingPage() {
             <ArrowRight className="w-4 h-4" />
           </Link>
           <Link
-            href="/canvas"
+            href="/canvas?demo=true"
             className="px-8 py-4 rounded-xl bg-white border border-black/10 text-slate-800 text-xs font-bold hover:bg-slate-50 transition-all shadow-sm no-underline"
           >
             Explore workspace canvas →

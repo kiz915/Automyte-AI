@@ -98,40 +98,12 @@ export default function OnboardingPage() {
       </div>
 
       {/* ========================================================================= */}
-      {/* SCREEN 1: IDEA STAGE SELECTOR WITH ASCII ART BANNER */}
+      {/* SCREEN 1: IDEA STAGE SELECTOR */}
       {/* ========================================================================= */}
       {onboardingStage === 1 && (
-        <div className="flex-1 flex items-center justify-between px-16 max-w-7xl mx-auto w-full z-10">
-          {/* Left Side: ASCII Art Text */}
-          <div className="font-mono text-slate-400 leading-none text-[13px] tracking-tight select-none opacity-85">
-            <pre className="text-slate-500 font-extrabold leading-tight">
-{`   _____                           _ 
-  / ____|                         | |
- | |  __  ___ _ __   ___ _ __ __ _| |
- | | |_ |/ _ \\ '_ \\ / _ \\ '__/ _\` | |
- | |__| |  __/ | | |  __/ | | (_| | |
-  \\____|_|\\___|_| |_|\\___|_|  \\__,_|_|
-
-  _____ _____ _______ 
- |_   _/ ____|__   __|
-   | || |  __   | |   
-   | || | |_ |  | |   
-  _| || |__| |  | |   
- |_____\\_____|  |_|   
-
-   _____                                                 
-  / ____|                                                
- | |  __ ___  _ __ ___  _ __   __ _ _ __  _   _ 
- | | |_ / _ \\| '_ \` _ \\| '_ \\ / _\` | '_ \\| | | |
- | |__| | (_) | | | | | | |_) | (_| | | | | |_| |
-  \\_____|\\___/|_| |_| |_| .__/ \\__,_|_| |_|\\__, |
-                        | |                 __/ |
-                        |_|                |___/ `}
-            </pre>
-          </div>
-
-          {/* Right Side: Idea Stage Slider */}
-          <div className="w-full max-w-md space-y-8 bg-white/40 p-8 rounded-3xl backdrop-blur-sm border border-black/5">
+        <div className="flex-1 flex items-center justify-center px-6 max-w-xl mx-auto w-full z-10">
+          {/* Idea Stage Slider Card */}
+          <div className="w-full space-y-8 bg-white p-8 rounded-3xl border border-black/10 shadow-lg">
             <h1 className="text-2xl font-serif font-bold text-[#1A1A1A]">What stage is your idea?</h1>
 
             {/* Stage Selector Pills & Slider Ticks */}

@@ -178,7 +178,10 @@ export default function SignupPage() {
         </form>
 
         <p className="text-[11px] text-ink-muted text-center mt-4">
-          By signing up you agree to our Terms of Service and Privacy Policy
+          By signing up you agree to our{" "}
+          <Link href="/terms" className="text-ink font-[500] underline">Terms of Service</Link>{" "}
+          and{" "}
+          <Link href="/privacy" className="text-ink font-[500] underline">Privacy Policy</Link>
         </p>
       </div>
 

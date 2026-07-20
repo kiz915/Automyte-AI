@@ -22,6 +22,7 @@ export async function middleware(request: NextRequest) {
     "/terms",
     "/auth/callback",
     "/onboarding",
+    "/canvas",
   ];
 
   const isPublic = publicPaths.some(

@@ -19,9 +19,9 @@ export interface ResourceArticle {
 
 export const resourcesData: ResourceArticle[] = [
   {
-    slug: "cofounder-partners-with-ramp-to-offer-incorporation",
-    title: "Automyte and Ramp bring incorporation to founders",
-    subtitle: "Founders can incorporate through Ramp inside Automyte today, with a broader partnership aimed at agentic finance over time.",
+    slug: "automyte-partners-with-ledgerly-to-offer-incorporation",
+    title: "Automyte and Ledgerly bring incorporation to founders",
+    subtitle: "Founders can incorporate through Ledgerly inside Automyte today, with a broader partnership aimed at agentic finance over time.",
     category: "Announcement",
     date: "July 7, 2026",
     author: {
@@ -31,117 +31,119 @@ export const resourcesData: ResourceArticle[] = [
     readTime: "4 min read",
     featured: true,
     image: "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=1200&q=80",
-    summary: "Today, Automyte AI is partnering with Ramp to enable zero-friction legal incorporation, cap table setup, and corporate credit cards natively within your workspace canvas.",
+    summary: "Today, Automyte AI is partnering with Ledgerly to enable zero-friction legal incorporation, cap table setup, and corporate credit cards natively within your workspace canvas.",
     keyTakeaways: [
-      "Instant incorporation via Ramp natively inside the Automyte AI canvas.",
+      "Instant incorporation via Ledgerly natively inside the Automyte AI canvas.",
       "Automated corporate banking, corporate card issuance, and 83(b) tax election tracking.",
-      "Deep integration between Automyte Finance Executive and Ramp agentic financial workflows.",
+      "Deep integration between Automyte Finance Executive and Ledgerly agentic financial workflows.",
     ],
     content: `
 ### Simplifying the Founder's First Step
 
 Starting a company has historically required navigating fragmented legal forms, waiting weeks for state approval, and setting up separate corporate banking accounts. 
 
-Starting today, founders can initiate Delaware C-Corp or LLC incorporation directly through Ramp from inside the Automyte AI platform. 
+Starting today, founders can initiate Delaware C-Corp or LLC incorporation directly through Ledgerly from inside the Automyte AI platform. 
 
-### Why Ramp + Automyte AI?
+### Why Ledgerly + Automyte AI?
 
-At Automyte, our vision is to provide an **agent-native operating system** where AI executives collaborate to execute engineering, design, marketing, and finance tasks. Ramp shares our vision for autonomous financial operations.
+At Automyte, our vision is to provide an **agent-native operating system** where AI executives collaborate to execute engineering, design, marketing, and finance tasks. Ledgerly shares our vision for autonomous financial operations.
 
-Through this strategic partnership:
-- **Instant Entity Creation**: Your Legal Executive drafts initial charters and submits incorporation documents to Delaware through Ramp in minutes.
-- **Automated Banking & Credit**: Once approved, your Ramp business bank account and corporate cards are provisioned instantly.
+Through this partnership:
+- **Instant Entity Creation**: Your Legal Executive drafts initial charters and submits incorporation documents to Delaware through Ledgerly in minutes.
+- **Automated Banking & Credit**: Once approved, your Ledgerly business bank account and corporate cards are provisioned instantly.
 - **Cap Table & Vesting Sync**: Founder equity splits and 4-year vesting schedules sync seamlessly into your Finance Executive's runway dashboard.
 
-> "Incorporation shouldn't be a multi-week administrative bottleneck. With Ramp and Automyte, founders go from idea to incorporated entity with active financial infrastructure in under 48 hours." — Kishore V, Automyte Founder
+> "Incorporation shouldn't be a multi-week administrative bottleneck. With Ledgerly and Automyte, founders go from idea to incorporated entity with active financial infrastructure in under 48 hours." — Kishore V, Automyte Founder
 
 ### What's Next for Agentic Finance
 
-This incorporation release is the first milestone in a multi-phase partnership. Over the coming months, Automyte AI and Ramp will release automated expense auditing, agent-initiated invoice payments with human-in-the-loop approval, and real-time cash flow optimization models.
+This incorporation release is the first milestone in a multi-phase partnership. Over the coming months, Automyte AI and Ledgerly will release automated expense auditing, agent-initiated invoice payments with human-in-the-loop approval, and real-time cash flow optimization models.
     `,
   },
   {
-    slug: "yohei-nakajima-activegraph-cofounder",
-    title: "Yohei Nakajima is building ActiveGraph with Automyte AI",
-    subtitle: "How the creator of BabyAGI used Automyte to launch an open source agent runtime with a site, blog, newsletter, and audience.",
+    slug: "alex-mercer-activegraph-automyte",
+    title: "How ActiveGraph launched with Automyte AI (Illustrative Example)",
+    subtitle: "An illustrative case study showing how a fictional solo builder launched an open source agent framework with site, blog, and docs using AI agents.",
     category: "Case Study",
     date: "May 27, 2026",
     author: {
-      name: "Yohei Nakajima",
-      role: "Creator of BabyAGI & General Partner at Untapped Capital",
+      name: "Alex Mercer (Fictional Persona)",
+      role: "Founder & Open Source Developer",
     },
     readTime: "6 min read",
     featured: false,
-    image: "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1200&q=80",
-    summary: "Discover how Yohei Nakajima leveraged Automyte AI's multi-agent executive team to launch ActiveGraph—an open source agent runtime—without hiring an external engineering or marketing agency.",
+    image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80",
+    summary: "An illustrative example scenario demonstrating how a fictional founder persona uses Automyte AI's multi-agent executive team to launch an open source agent project.",
     keyTakeaways: [
-      "Built and launched ActiveGraph's marketing site, blog engine, and newsletter setup in under 7 days.",
-      "Automyte Engineering Agent scaffolded the open-source repository documentation and API benchmarks.",
+      "Illustrative scenario: Built and launched marketing site, blog engine, and docs setup in 7 days.",
+      "Automyte Engineering Agent scaffolded repository documentation and API benchmarks.",
       "Automyte Marketing Agent wrote content announcements and automated audience subscriber onboarding.",
     ],
     content: `
-### Background: The Need for Speed in Open Source
+### Background: Illustrative Open Source Workflow
 
-Yohei Nakajima, creator of the pioneering BabyAGI project, needed a fast way to launch **ActiveGraph**—an open-source framework designed for dynamic AI graph execution.
+Alex Mercer (a fictional founder persona created for this demonstration) needed a fast way to launch **ActiveGraph**—a fictional open-source framework designed for dynamic AI graph execution.
 
-As a solo builder and venture investor, Yohei didn't have months to spend designing landing pages, configuring blog CMS tools, or drafting weekly subscriber newsletters.
+As a solo builder, Alex didn't have months to spend designing landing pages, configuring blog CMS tools, or drafting weekly subscriber newsletters.
 
 ### The Automyte Workflow
 
-Using Automyte AI, Yohei deployed a full squad of virtual executives:
+Using Automyte AI, Alex deployed a full squad of virtual executives:
 1. **Design Executive (Luna)**: Drafted ActiveGraph's dark-mode brand kit, SVG architecture diagrams, and landing page wireframes.
 2. **Engineering Executive (Jordan)**: Scaffolded the Next.js marketing repository, wired GitHub releases, and published documentation pages.
 3. **Marketing Executive (Maya)**: Wrote launch announcements, established the email newsletter channel, and automated social distribution.
 
-> "Automyte allowed me to operate with the output of a 6-person startup team. I was able to focus entirely on core algorithm design while Automyte handled our site, docs, and subscriber launch." — Yohei Nakajima
+> "Automyte allowed me to operate with the output of a 6-person startup team. I was able to focus entirely on core algorithm design while Automyte handled our site, docs, and subscriber launch." — Alex Mercer (Fictional Persona)
 
-### Impact & Results
+### Example Results & Metrics
 
-ActiveGraph reached **over 4,500 GitHub stars** and accumulated **10,000+ newsletter subscribers** within its first three weeks of release—all managed seamlessly through the Automyte workspace canvas.
+*(Note: The following metrics represent illustrative example numbers for product demonstration purposes)*
+
+ActiveGraph reached an **illustrative 2,500+ GitHub stars** and accumulated **5,000+ newsletter subscribers** within its demonstration launch window.
     `,
   },
   {
-    slug: "daria-ansh-veery-safer-cosmetic-dentistry",
-    title: "Daria Ansh, Founder of Veery, is building safer cosmetic dentistry with Automyte AI",
-    subtitle: "How a solo founder is using Automyte to vet global dentist and ceramist teams, grow search visibility, and scale Veery without a team.",
+    slug: "elena-rostova-dentalflow-case-study",
+    title: "Elena Rostova, Founder of DentalFlow, is building digital dental workflows with Automyte AI",
+    subtitle: "How a fictional solo founder uses Automyte to vet lab teams, grow search visibility, and scale operations (Illustrative Example).",
     category: "Case Study",
     date: "May 21, 2026",
     author: {
-      name: "Daria Ansh",
-      role: "Founder & CEO, Veery",
+      name: "Elena Rostova (Fictional Persona)",
+      role: "Founder & CEO, DentalFlow",
     },
     readTime: "5 min read",
     featured: false,
-    image: "https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=1200&q=80",
-    summary: "Veery is revolutionizing cosmetic dentistry by connecting patients with top-tier verified dental ceramists. Learn how founder Daria Ansh uses Automyte to run global vetting, SEO content pipelines, and customer support.",
+    image: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1200&q=80",
+    summary: "DentalFlow is a fictional healthcare technology platform connecting dental clinics with verified lab technicians. Learn how fictional founder Elena Rostova uses Automyte to run vetting, SEO pipelines, and support.",
     keyTakeaways: [
-      "Automyte Operations Agent automated vetting workflows for over 200 global dental lab partners.",
-      "Automyte Marketing Agent built an SEO pipeline generating 45k+ organic monthly visits.",
-      "Automyte Support Agent handles 85% of patient pre-consultation inquiries 24/7.",
+      "Illustrative scenario: Automyte Operations Agent automated partner vetting workflows.",
+      "Automyte Marketing Agent built an SEO content pipeline generating organic traffic.",
+      "Automyte Support Agent handles 85% of pre-consultation inquiries 24/7.",
     ],
     content: `
 ### The Challenge: High Trust in Medical Healthcare
 
-Cosmetic dentistry requires exceptionally high trust and rigorous quality control. Veery was founded to ensure patients receive safe, natural-looking veneers and ceramic restorations crafted by verified master technicians.
+*(Note: DentalFlow and Elena Rostova are fictional demonstration entities)*
 
-As a solo founder in healthcare operations, Daria faced immense operational overhead: verifying lab credentials, managing patient inquiries, and producing authoritative educational content.
+Digital dental workflows require high trust and quality control. DentalFlow was conceptualized as an illustrative example of managing clinic workflows and partner technician verifications.
 
-### How Automyte AI Powers Veery
+### How Automyte AI Powers DentalFlow
 
-Daria deployed Automyte AI as her virtual core operating team:
-- **Vetting Automation**: The Operations Agent collects dental licenses, lab certifications, and portfolio imagery, scoring partners against quality benchmarks.
-- **SEO & Organic Growth**: The Marketing Agent drafts clinically verified articles explaining veneer procedures, longevity metrics, and oral health care.
-- **Patient Triage**: The Support Agent answers patient questions about procedure costs, recovery timelines, and clinic locations.
+Elena deployed Automyte AI as her virtual core operating team:
+- **Vetting Automation**: The Operations Agent collects lab certifications and portfolio imagery, scoring partners against quality benchmarks.
+- **SEO & Organic Growth**: The Marketing Agent drafts verified articles explaining restorative procedures and longevity metrics.
+- **Patient Triage**: The Support Agent answers inquiries about appointment scheduling and location details.
 
-> "With Automyte, Veery runs like an established healthcare company. My AI agents handle patient inquiries with empathy and accuracy, freeing me to expand our clinical partner network." — Daria Ansh
+> "With Automyte, DentalFlow runs like an established healthcare company. My AI agents handle patient inquiries with empathy and accuracy." — Elena Rostova (Fictional Persona)
 
-### Scale & Metrics
+### Illustrative Scale & Metrics
 
-Veery expanded to **14 major metropolitan markets**, onboarded **120+ verified dental partners**, and handles **over 1,200 monthly patient consultations** with zero full-time operational employees.
+DentalFlow demonstrated operations across **10 illustrative markets**, onboarding **50+ partner labs**, and managing **over 500 monthly inquiries** as a lean, agentic business model.
     `,
   },
   {
-    slug: "introducing-cofounder-2",
+    slug: "introducing-automyte-2",
     title: "Announcing Automyte 2: Run an entire company with AI",
     subtitle: "The infrastructure for the one-person billion-dollar company.",
     category: "Announcement",
@@ -171,7 +173,7 @@ We built Automyte 2 on a single premise: **A solo founder equipped with a coordi
 ### Key Innovations in Automyte 2
 
 1. **Radial Executive Orbit (/canvas)**:
-   Instead of static chat boxes, Automyte 2 introduces a full-bleed 100vw x 100vh spatial workspace canvas. Your central Cofounder node orchestrates 8 orbiting department heads (*Engineering, Sales, Marketing, Design, Finance, Operations, Legal, Support*).
+   Instead of static chat boxes, Automyte 2 introduces a full-bleed 100vw x 100vh spatial workspace canvas. Your central Automyte node orchestrates 8 orbiting department heads (*Engineering, Sales, Marketing, Design, Finance, Operations, Legal, Support*).
 
 2. **Cross-Agent Task Delegation**:
    When you ask to "Launch our new product tier," your CEO agent delegates UI mockups to Design, DB migrations to Engineering, email campaigns to Sales, and pricing models to Finance simultaneously.
@@ -183,7 +185,7 @@ We built Automyte 2 on a single premise: **A solo founder equipped with a coordi
     `,
   },
   {
-    slug: "an-update-on-cofounder-1",
+    slug: "an-update-on-automyte-1",
     title: "An Update on Automyte 1",
     subtitle: "The original Automyte product sunsets as Automyte 2 prepares to launch.",
     category: "Announcement",
@@ -260,7 +262,7 @@ In an agent-native repository, AI agents act as the primary individual contribut
     `,
   },
   {
-    slug: "cofounder-1-5-seed-round",
+    slug: "automyte-1-5-seed-round",
     title: "Announcing Automyte 1.5 and our $8.7 Million Seed Round",
     subtitle: "Automyte raises seed funding to build the infrastructure for agent-run companies.",
     category: "Announcement",
@@ -290,7 +292,7 @@ Today, we are thrilled to share that we have raised **$8.7 million in seed fundi
 This funding will support three core engineering priorities:
 1. **Multi-Agent Memory Infrastructure**: Enhancing long-term vector and relational memory so your executive agents retain context across months of company growth.
 2. **Speed & Latency Optimization**: Reducing agent response and task execution latency to under 2 seconds.
-3. **Enterprise Integration Suite**: Deepening integrations with GitHub, Supabase, Vercel, Stripe, Ramp, and HubSpot.
+3. **Enterprise Integration Suite**: Deepening integrations with GitHub, Supabase, Vercel, Stripe, Ledgerly, and HubSpot.
 
 We want to thank our early community of founders, developers, and creators who inspire us every single day!
     `,

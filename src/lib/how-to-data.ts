@@ -145,13 +145,13 @@ export const howToData: Record<string, HowToChapter> = {
         title: "Take the Leap & Incorporate",
         shortDesc: "Draft bylaws, incorporate your entity, and launch your founding charter.",
         fullContent:
-          "Once your wedge is clear and your name is secured, take the leap. Connect with Ramp via Automyte AI to incorporate your Delaware C-Corp or LLC in minutes, set up corporate banking, assign founder equity with 4-year vesting schedules (1-year cliff), and issue your first 80(b) tax elections.",
+          "Once your wedge is clear and your name is secured, take the leap. Connect with Ledgerly via Automyte AI to incorporate your Delaware C-Corp or LLC in minutes, set up corporate banking, assign founder equity with 4-year vesting schedules (1-year cliff), and issue your first 80(b) tax elections.",
         agentRole: "Legal & Operations Executive",
         suggestedPrompt: "Draft Delaware C-Corp incorporation docs with 80/20 equity split and standard 4-year vesting schedule.",
         checklist: [
           "File Delaware C-Corp or state LLC incorporation",
           "Establish founder equity split & vesting terms",
-          "Set up business bank account and corporate credit card via Ramp",
+          "Set up business bank account and corporate credit card via Ledgerly",
         ],
       },
     ],
@@ -575,7 +575,7 @@ export const howToData: Record<string, HowToChapter> = {
         ],
       },
     ],
-    nextSlug: "resources",
+    nextSlug: "/resources",
     nextTitle: "Explore Resources & Essays",
   },
 };

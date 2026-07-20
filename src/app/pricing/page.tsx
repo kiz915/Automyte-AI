@@ -100,7 +100,7 @@ export default function PricingPage() {
             <Link href="/resources" className="text-[14px] font-[460] text-ink-secondary hover:text-ink transition-colors no-underline">Resources</Link>
             <Link href="/pricing" className="text-[14px] font-[520] text-ink no-underline">Pricing</Link>
           </nav>
-          <Link href="/login" className="relative inline-flex items-center justify-center h-[37px] px-4 rounded-[8px] no-underline">
+          <Link href="/onboarding" className="relative inline-flex items-center justify-center h-[37px] px-4 rounded-[8px] no-underline">
             <span aria-hidden="true" className="pointer-events-none absolute inset-0 rounded-[8px] cta-btn" />
             <span className="relative z-10 text-[14px] font-[460] text-[#1a1a1a]">Run a company</span>
           </Link>
@@ -147,7 +147,7 @@ export default function PricingPage() {
                 ))}
               </ul>
 
-              <Link href="/login" className="relative flex items-center justify-center h-[41px] rounded-[8px] no-underline">
+              <Link href="/onboarding" className="relative flex items-center justify-center h-[41px] rounded-[8px] no-underline">
                 {tier.highlight ? (
                   <>
                     <span aria-hidden="true" className="pointer-events-none absolute inset-0 rounded-[8px] cta-btn" />

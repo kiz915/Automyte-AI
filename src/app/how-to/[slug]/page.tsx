@@ -348,7 +348,7 @@ export default function HowToPage() {
                   </div>
                 </div>
                 <Link
-                  href={`/how-to/${chapter.nextSlug}`}
+                  href={chapter.nextSlug.startsWith("/") ? chapter.nextSlug : `/how-to/${chapter.nextSlug}`}
                   className="px-5 py-2.5 rounded-xl bg-[#1A1A1A] text-white text-xs font-bold hover:bg-black transition-all no-underline flex items-center gap-2"
                 >
                   Continue
