@@ -1,5 +1,9 @@
 "use client";
 
+/* ============================================================
+   AUTOMYTE AI v2.0 — Cofounder.co Landing Page
+   ============================================================ */
+
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { ArrowRight, Play, CheckCircle2, ChevronRight, Sparkles, Shield, Cpu, Zap, Target, Users, LineChart } from "lucide-react";

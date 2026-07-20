@@ -1,5 +1,9 @@
 "use client";
 
+/* ============================================================
+   AUTOMYTE AI v2.0 — Cofounder.co Onboarding Workflow
+   ============================================================ */
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { updateProfile } from "@/lib/store";

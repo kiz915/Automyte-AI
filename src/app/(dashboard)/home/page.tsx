@@ -1,5 +1,9 @@
 "use client";
 
+/* ============================================================
+   AUTOMYTE AI v2.0 — Cofounder.co Orchestration Canvas Dashboard
+   ============================================================ */
+
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 import { AppHeader } from "@/components/layout/app-header";
