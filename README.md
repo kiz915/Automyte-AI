@@ -1,36 +1,74 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🌻 Automyte AI — Cofounder Orchestration Platform
 
-## Getting Started
+> Automyte AI is an agent orchestration platform designed to help you run an entire business.
 
-First, run the development server:
+![Automyte AI](https://img.shields.io/badge/Next.js-16.2.10-black?style=for-the-badge&logo=nextdotjs)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript)
+![TailwindCSS](https://img.shields.io/badge/TailwindCSS-v4-06B6D4?style=for-the-badge&logo=tailwindcss)
+![Supabase](https://img.shields.io/badge/Supabase-Database-3ECF8E?style=for-the-badge&logo=supabase)
+
+---
+
+## ✨ Features
+
+- **🌻 Interactive Canvas Workspace (`/canvas`)**: 
+  - Central `Cofounder` core node with 8 orbiting department nodes (*Engineering, Sales, Marketing, Design, Finance, Operations, Legal, Support*).
+  - Real-time status indicators, branch lines to active artifact cards, and click-to-focus department detail sidebar.
+  - Floating notification bell `[🔔]`, plus button `[+]`, and model release toast notifications.
+
+- **📜 Onboarding Workflow (`/onboarding`)**:
+  - Stage 1 idea stage slider (*Pre-idea, Idea, Pre-MVP, MVP, Customers, Revenue, Public*) with ASCII art header.
+  - Interactive onboarding Q&A chat streaming AI responses and generating a **Business Plan Accepted** card.
+  - Dynamic orbital graph spawning executive department agents live as you chat.
+  - Visual identity brand kit roadmap & vibe selector.
+
+- **📁 "How to Build a Company" Tech Tree Modal**:
+  - 5-stage company build roadmap (*Identity Stage, Build Stage, GTM Stage, Launch Stage, Scale Stage*).
+  - Status badges (*Available, Agent can do this, Needs your input, Needs approval, Locked*).
+
+- **💬 Multi-Tab Executive Control Center**:
+  - `Home`: Greeting, Automyte Roadmap progress card (`9% >`), and "Suggested Next" checklist.
+  - `Cofounder`: Direct executive chat assistant.
+  - `Company`: Startup profile briefing, SWOT, and business model.
+  - `Tasks`: Approval workflow gates and task execution logs.
+  - `Library`: Document asset library with inline editor.
+
+---
+
+## 🛠️ Getting Started
+
+First, install dependencies and run the development server:
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser to explore the platform.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Available Routes
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `/` — Landing page with radial node orchestration preview
+- `/onboarding` — 4-stage interactive startup onboarding
+- `/canvas` — Full-bleed 100vw x 100vh interactive workspace canvas
+- `/home` — Dashboard control center
+- `/pricing` — Upgrade & plan selection
+- `/how-to/start` — Guide documentation
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 🔒 Environment Variables
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Copy `.env.local.example` to `.env.local` and add your Supabase & NVIDIA API credentials:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+NVIDIA_API_KEY=your-nvidia-api-key
+```
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🚢 Deployment
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Deployed automatically on [Vercel](https://automyte-ai.vercel.app).
