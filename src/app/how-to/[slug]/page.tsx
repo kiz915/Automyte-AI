@@ -2,236 +2,383 @@
 
 import Link from "next/link";
 import { useParams, notFound } from "next/navigation";
-import { CheckCircle2, ArrowRight, Zap, Target, LineChart, Users } from "lucide-react";
+import { useState } from "react";
+import { howToData, HowToStepItem } from "@/lib/how-to-data";
+import {
+  Zap,
+  Target,
+  Users,
+  LineChart,
+  CheckCircle2,
+  ArrowRight,
+  Sparkles,
+  BookOpen,
+  ChevronRight,
+  Copy,
+  Check,
+} from "lucide-react";
 
-const contentMap: Record<
-  string,
-  {
-    title: string;
-    subtitle: string;
-    icon: React.ReactNode;
-    description: string;
-    steps: { title: string; desc: string }[];
-    quote: string;
-  }
-> = {
-  start: {
-    title: "Start your company",
-    subtitle: "Go from idea to incorporation in days, not months.",
-    icon: <Zap className="w-6 h-6 text-ink-secondary" />,
-    description:
-      "Starting a company usually involves endless research, expensive lawyers, and confusing paperwork. With Automyte AI, your virtual Legal and Operations executives handle the heavy lifting.",
-    steps: [
-      {
-        title: "1. Define your structure",
-        desc: "Chat with your Legal Agent to determine if you need an LLC or C-Corp based on your funding goals.",
-      },
-      {
-        title: "2. Generate paperwork",
-        desc: "Instantly generate localized operating agreements, bylaws, and founder equity splits.",
-      },
-      {
-        title: "3. Set up the back-office",
-        desc: "Your Finance Agent will map out your cap table and prepare your initial banking requirements.",
-      },
-    ],
-    quote: "Automyte took the headache out of incorporation. It was like having a seasoned GC on staff from day one.",
-  },
-  build: {
-    title: "Build your product",
-    subtitle: "Accelerate development with AI-driven product management.",
-    icon: <Target className="w-6 h-6 text-ink-secondary" />,
-    description:
-      "Building the MVP is the hardest part of any startup journey. Your Engineering and Design agents work together to turn your rough ideas into deployable code and beautiful interfaces.",
-    steps: [
-      {
-        title: "1. PRD Generation",
-        desc: "Your Product Agent turns your brain-dump into a structured Product Requirements Document.",
-      },
-      {
-        title: "2. UI/UX Design System",
-        desc: "The Design Agent establishes your brand kit, color palette, and component library.",
-      },
-      {
-        title: "3. Code Generation",
-        desc: "The Engineering Agent sets up your CI/CD pipeline and writes the foundational boilerplate.",
-      },
-    ],
-    quote: "We shipped our MVP in 3 weeks instead of 3 months. The engineering agent caught edge cases we didn't even think of.",
-  },
-  sell: {
-    title: "Sell to customers",
-    subtitle: "Build a scalable GTM motion from day one.",
-    icon: <Users className="w-6 h-6 text-ink-secondary" />,
-    description:
-      "You built it, but will they come? Your Sales and Marketing agents help you identify your Ideal Customer Profile (ICP), write compelling copy, and execute outbound campaigns.",
-    steps: [
-      {
-        title: "1. Define your ICP",
-        desc: "The Marketing Agent analyzes your product to identify the highest-converting buyer personas.",
-      },
-      {
-        title: "2. Craft the messaging",
-        desc: "Generate landing page copy, email sequences, and ad creatives tailored to your audience.",
-      },
-      {
-        title: "3. Execute outreach",
-        desc: "The Sales Agent builds targeted lead lists and drafts personalized cold emails for your approval.",
-      },
-    ],
-    quote: "Our marketing agent wrote a cold email sequence that got us our first 10 paying enterprise customers.",
-  },
-  scale: {
-    title: "Scale your operations",
-    subtitle: "Maintain momentum without breaking the machine.",
-    icon: <LineChart className="w-6 h-6 text-ink-secondary" />,
-    description:
-      "When you hit product-market fit, things break. Your Finance and Operations agents help you forecast cash flow, automate HR onboarding, and keep the engine running smoothly.",
-    steps: [
-      {
-        title: "1. Financial Modeling",
-        desc: "The Finance Agent builds dynamic runway models and prepares your Series A data room.",
-      },
-      {
-        title: "2. Automate Workflows",
-        desc: "The Operations Agent connects your CRM to your billing system to eliminate manual data entry.",
-      },
-      {
-        title: "3. Scale Support",
-        desc: "Deploy AI-driven support protocols to handle tier-1 customer tickets automatically.",
-      },
-    ],
-    quote: "Scaling from 10 to 50 employees usually breaks a company. Automyte's operations agent kept us completely sane.",
-  },
+const iconMap = {
+  Zap: <Zap className="w-6 h-6 text-amber-500" />,
+  Target: <Target className="w-6 h-6 text-amber-500" />,
+  Users: <Users className="w-6 h-6 text-amber-500" />,
+  LineChart: <LineChart className="w-6 h-6 text-amber-500" />,
 };
 
 export default function HowToPage() {
   const params = useParams();
-  const slug = params.slug as string;
+  const slug = (params.slug as string)?.toLowerCase();
 
-  const content = contentMap[slug];
+  const chapter = howToData[slug];
 
-  if (!content) {
+  const [activeStepId, setActiveStepId] = useState<string>(
+    chapter?.steps[0]?.id || "introduction"
+  );
+  const [copiedPrompt, setCopiedPrompt] = useState<boolean>(false);
+
+  if (!chapter) {
     notFound();
   }
 
+  const activeStep: HowToStepItem =
+    chapter.steps.find((s) => s.id === activeStepId) || chapter.steps[0];
+
+  const handleCopyPrompt = (prompt: string) => {
+    navigator.clipboard.writeText(prompt);
+    setCopiedPrompt(true);
+    setTimeout(() => setCopiedPrompt(false), 2000);
+  };
+
   return (
-    <div className="min-h-screen bg-surface flex flex-col font-sans">
-      {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b border-border-subtle bg-surface/80 backdrop-blur-md">
-        <div className="max-w-[1200px] mx-auto px-6 h-[72px] flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 no-underline">
-            <div className="w-8 h-8 rounded-md bg-ink flex items-center justify-center">
-              <span className="text-surface-raised text-sm font-bold">A</span>
-            </div>
-            <span className="text-[20px] font-semibold tracking-tight text-ink">
-              Automyte
-            </span>
+    <div className="min-h-screen bg-[#F7F6F2] text-[#1A1A1A] font-sans flex flex-col selection:bg-amber-200 selection:text-black">
+      {/* ============================================================ */}
+      {/* HEADER NAVIGATION */}
+      {/* ============================================================ */}
+      <header className="sticky top-0 z-50 bg-[#F7F6F2]/90 backdrop-blur-md border-b border-black/5">
+        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+          <Link
+            href="/"
+            className="flex items-center gap-2 text-2xl font-serif font-semibold tracking-tight text-[#1A1A1A] no-underline"
+          >
+            <span>Automyte</span>
           </Link>
-          <div className="flex items-center gap-4">
+
+          <nav className="hidden md:flex items-center gap-6">
+            <div className="flex items-center bg-white/80 border border-black/10 rounded-full px-3 py-1.5 gap-2 text-xs font-medium shadow-xs">
+              <span className="text-slate-400 font-semibold pl-1">How to</span>
+              <span className="text-slate-300">|</span>
+              <Link
+                href="/how-to/start"
+                className={`px-3 py-1 rounded-full transition-all no-underline ${
+                  slug === "start"
+                    ? "bg-[#1A1A1A] text-white font-bold"
+                    : "text-slate-600 hover:text-black"
+                }`}
+              >
+                Start
+              </Link>
+              <Link
+                href="/how-to/build"
+                className={`px-3 py-1 rounded-full transition-all no-underline ${
+                  slug === "build"
+                    ? "bg-[#1A1A1A] text-white font-bold"
+                    : "text-slate-600 hover:text-black"
+                }`}
+              >
+                Build
+              </Link>
+              <Link
+                href="/how-to/sell"
+                className={`px-3 py-1 rounded-full transition-all no-underline ${
+                  slug === "sell"
+                    ? "bg-[#1A1A1A] text-white font-bold"
+                    : "text-slate-600 hover:text-black"
+                }`}
+              >
+                Sell
+              </Link>
+              <Link
+                href="/how-to/scale"
+                className={`px-3 py-1 rounded-full transition-all no-underline ${
+                  slug === "scale"
+                    ? "bg-[#1A1A1A] text-white font-bold"
+                    : "text-slate-600 hover:text-black"
+                }`}
+              >
+                Scale
+              </Link>
+            </div>
+
             <Link
-              href="/login"
-              className="text-[14px] font-[500] text-ink-secondary hover:text-ink transition-colors no-underline"
+              href="/resources"
+              className="text-xs font-medium text-slate-700 hover:text-black transition-colors no-underline"
             >
-              Sign in
+              Resources
             </Link>
+
             <Link
-              href="/signup"
-              className="h-[36px] px-4 rounded-full bg-ink text-ink-inverted flex items-center justify-center text-[13px] font-[500] hover:bg-[#333] transition-colors no-underline"
+              href="/pricing"
+              className="text-xs font-medium text-slate-700 hover:text-black transition-colors no-underline"
             >
-              Get Started
+              Pricing
             </Link>
-          </div>
+
+            <Link
+              href="/onboarding"
+              className="px-5 py-2.5 rounded-xl bg-[#1A1A1A] text-white text-xs font-bold hover:bg-black transition-all shadow-md no-underline flex items-center gap-1.5"
+            >
+              Run a company
+            </Link>
+          </nav>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="flex-1">
-        {/* Hero Section */}
-        <section className="py-24 px-6 border-b border-border-subtle bg-surface-card">
-          <div className="max-w-[800px] mx-auto text-center">
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-surface border border-border-subtle mb-6 shadow-sm">
-              {content.icon}
-            </div>
-            <h1 className="text-4xl md:text-5xl font-semibold tracking-tight text-ink mb-6">
-              {content.title}
-            </h1>
-            <p className="text-xl text-ink-secondary font-[420] max-w-2xl mx-auto leading-relaxed">
-              {content.subtitle}
-            </p>
+      {/* ============================================================ */}
+      {/* HERO SECTION */}
+      {/* ============================================================ */}
+      <section className="py-16 px-6 border-b border-black/5 bg-white">
+        <div className="max-w-4xl mx-auto text-center space-y-6">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[#FAF9F6] border border-black/10 shadow-xs">
+            {iconMap[chapter.iconName]}
           </div>
-        </section>
 
-        {/* Details Section */}
-        <section className="py-24 px-6">
-          <div className="max-w-[1000px] mx-auto grid md:grid-cols-2 gap-16 items-center">
-            {/* Left: Text Content */}
-            <div>
-              <h2 className="text-2xl font-semibold text-ink mb-4">
-                The Playbook
-              </h2>
-              <p className="text-[15px] text-ink-faint leading-relaxed mb-10">
-                {content.description}
-              </p>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-800 text-xs font-semibold">
+            <span>{chapter.readTime}</span>
+            <span>•</span>
+            <span>Founder Playbook</span>
+          </div>
 
-              <div className="space-y-8">
-                {content.steps.map((step, idx) => (
-                  <div key={idx} className="flex gap-4">
-                    <div className="mt-1 flex-shrink-0">
-                      <CheckCircle2 className="w-5 h-5 text-ink-secondary" />
-                    </div>
-                    <div>
-                      <h3 className="text-[16px] font-[500] text-ink mb-1">
+          <h1 className="text-4xl md:text-5xl font-serif font-bold tracking-tight text-[#1A1A1A] leading-[115%]">
+            {chapter.title}
+          </h1>
+
+          <p className="text-lg text-slate-600 font-normal max-w-2xl mx-auto leading-relaxed">
+            {chapter.subtitle}
+          </p>
+
+          {/* Metrics Row */}
+          <div className="grid grid-cols-3 gap-4 pt-6 max-w-xl mx-auto">
+            {chapter.metrics.map((metric, idx) => (
+              <div
+                key={idx}
+                className="bg-[#F7F6F2] p-4 rounded-xl border border-black/5 text-center"
+              >
+                <div className="text-xl font-bold text-[#1A1A1A] font-mono">
+                  {metric.value}
+                </div>
+                <div className="text-xs text-slate-500 font-medium mt-1">
+                  {metric.label}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================================ */}
+      {/* MAIN PLAYBOOK BODY */}
+      {/* ============================================================ */}
+      <main className="flex-1 max-w-7xl mx-auto px-6 py-12 w-full">
+        <div className="grid lg:grid-cols-12 gap-10 items-start">
+          {/* Left Column: Interactive Step Selector */}
+          <div className="lg:col-span-4 space-y-3 sticky top-28">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400 px-2">
+              Playbook Chapters ({chapter.steps.length} Steps)
+            </h3>
+
+            <div className="space-y-2">
+              {chapter.steps.map((step) => {
+                const isActive = step.id === activeStep.id;
+                return (
+                  <button
+                    key={step.id}
+                    onClick={() => setActiveStepId(step.id)}
+                    className={`w-full text-left p-4 rounded-2xl transition-all cursor-pointer border flex items-start gap-3.5 ${
+                      isActive
+                        ? "bg-white border-black/20 shadow-md ring-1 ring-black/5"
+                        : "bg-transparent border-transparent hover:bg-white/60 hover:border-black/5 text-slate-600"
+                    }`}
+                  >
+                    <span
+                      className={`text-xs font-mono font-bold px-2 py-0.5 rounded-md ${
+                        isActive
+                          ? "bg-[#1A1A1A] text-white"
+                          : "bg-slate-200 text-slate-700"
+                      }`}
+                    >
+                      {step.number}
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <h4
+                        className={`text-sm font-semibold truncate ${
+                          isActive ? "text-[#1A1A1A]" : "text-slate-700"
+                        }`}
+                      >
                         {step.title}
-                      </h3>
-                      <p className="text-[14px] text-ink-faint leading-relaxed">
-                        {step.desc}
+                      </h4>
+                      <p className="text-xs text-slate-500 line-clamp-1 mt-0.5">
+                        {step.shortDesc}
                       </p>
                     </div>
+                    {isActive && (
+                      <ChevronRight className="w-4 h-4 text-slate-400 shrink-0 self-center" />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Quote Box */}
+            <div className="mt-8 p-6 bg-white rounded-2xl border border-black/10 shadow-xs space-y-3">
+              <p className="text-xs italic text-slate-600 leading-relaxed">
+                "{chapter.quote.text}"
+              </p>
+              <div className="text-xs font-semibold text-[#1A1A1A]">
+                — {chapter.quote.author},{" "}
+                <span className="text-slate-500 font-normal">
+                  {chapter.quote.role}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column: Detailed Step Content */}
+          <div className="lg:col-span-8 space-y-8">
+            <div className="bg-white rounded-3xl p-8 border border-black/10 shadow-sm space-y-6">
+              {/* Step Header */}
+              <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-black/5">
+                <div className="flex items-center gap-3">
+                  <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-lg bg-[#1A1A1A] text-white">
+                    STEP {activeStep.number}
+                  </span>
+                  <span className="text-xs font-semibold px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-800 flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5" />
+                    {activeStep.agentRole}
+                  </span>
+                </div>
+              </div>
+
+              {/* Title & Full Content */}
+              <div className="space-y-4">
+                <h2 className="text-2xl md:text-3xl font-serif font-bold text-[#1A1A1A]">
+                  {activeStep.title}
+                </h2>
+                <p className="text-base text-slate-700 leading-relaxed font-normal">
+                  {activeStep.fullContent}
+                </p>
+              </div>
+
+              {/* Agent Prompt Box */}
+              <div className="bg-[#FAF9F6] p-5 rounded-2xl border border-black/10 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-500">
+                    <Sparkles className="w-4 h-4 text-amber-500" />
+                    Suggested Agent Execution Prompt
                   </div>
-                ))}
+                  <button
+                    onClick={() =>
+                      handleCopyPrompt(activeStep.suggestedPrompt)
+                    }
+                    className="text-xs font-medium text-slate-600 hover:text-black flex items-center gap-1 cursor-pointer bg-white px-2.5 py-1 rounded-lg border border-black/10 transition-all"
+                  >
+                    {copiedPrompt ? (
+                      <>
+                        <Check className="w-3.5 h-3.5 text-emerald-600" />
+                        <span>Copied!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-3.5 h-3.5" />
+                        <span>Copy Prompt</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+                <div className="font-mono text-xs text-slate-800 bg-white p-3.5 rounded-xl border border-black/5 leading-relaxed">
+                  "{activeStep.suggestedPrompt}"
+                </div>
+              </div>
+
+              {/* Actionable Checklist */}
+              <div className="space-y-3 pt-2">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                  Execution Checklist
+                </h4>
+                <div className="space-y-2.5">
+                  {activeStep.checklist.map((item, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-center gap-3 text-sm text-slate-700 bg-white p-3 rounded-xl border border-black/5 shadow-2xs"
+                    >
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                      <span>{item}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Execute CTA */}
+              <div className="pt-4 border-t border-black/5 flex flex-wrap items-center justify-between gap-4">
+                <Link
+                  href="/onboarding"
+                  className="px-6 py-3 rounded-xl bg-[#1A1A1A] text-white text-xs font-bold hover:bg-black transition-all shadow-md no-underline flex items-center gap-2"
+                >
+                  Execute this step in Automyte AI
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+
+                <Link
+                  href="/canvas"
+                  className="text-xs font-semibold text-slate-700 hover:text-black no-underline"
+                >
+                  Open Canvas Workspace →
+                </Link>
               </div>
             </div>
 
-            {/* Right: CTA & Quote */}
-            <div className="space-y-8">
-              {/* Card */}
-              <div className="surface-card p-8 rounded-[16px] border border-border-subtle shadow-sm">
-                <h3 className="text-xl font-semibold text-ink mb-2">
-                  Ready to execute?
-                </h3>
-                <p className="text-[14px] text-ink-faint mb-6">
-                  Deploy your AI executive team today and start executing on this
-                  playbook immediately.
-                </p>
+            {/* Next Chapter Link Banner */}
+            {chapter.nextSlug && (
+              <div className="bg-white p-6 rounded-3xl border border-black/10 shadow-xs flex items-center justify-between gap-4">
+                <div>
+                  <div className="text-xs text-slate-400 font-semibold uppercase tracking-wider">
+                    Next Playbook
+                  </div>
+                  <div className="text-lg font-serif font-bold text-[#1A1A1A] mt-0.5">
+                    {chapter.nextTitle}
+                  </div>
+                </div>
                 <Link
-                  href="/signup"
-                  className="flex items-center justify-center gap-2 w-full h-[44px] rounded-[8px] bg-ink text-ink-inverted text-[14px] font-[500] hover:bg-[#333] transition-colors no-underline"
+                  href={`/how-to/${chapter.nextSlug}`}
+                  className="px-5 py-2.5 rounded-xl bg-[#1A1A1A] text-white text-xs font-bold hover:bg-black transition-all no-underline flex items-center gap-2"
                 >
-                  Start building for free
+                  Continue
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
-
-              {/* Quote block */}
-              <blockquote className="pl-6 border-l-2 border-ink/20">
-                <p className="text-[15px] italic text-ink-secondary mb-4 leading-relaxed">
-                  "{content.quote}"
-                </p>
-                <footer className="text-[13px] font-[500] text-ink">
-                  — Kishore V, Automyte CEO
-                </footer>
-              </blockquote>
-            </div>
+            )}
           </div>
-        </section>
+        </div>
       </main>
 
-      {/* Simple Footer */}
-      <footer className="py-12 border-t border-border-subtle text-center">
-        <p className="text-[13px] text-ink-ghost">
-          © {new Date().getFullYear()} Automyte AI. All rights reserved.
-        </p>
+      {/* Footer */}
+      <footer className="py-12 border-t border-black/5 bg-white text-center text-xs text-slate-400">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div>© {new Date().getFullYear()} Automyte AI. All rights reserved.</div>
+          <div className="flex items-center gap-6">
+            <Link href="/" className="hover:text-black no-underline">
+              Home
+            </Link>
+            <Link href="/resources" className="hover:text-black no-underline">
+              Resources
+            </Link>
+            <Link href="/pricing" className="hover:text-black no-underline">
+              Pricing
+            </Link>
+            <Link href="/onboarding" className="hover:text-black no-underline">
+              Run a company
+            </Link>
+          </div>
+        </div>
       </footer>
     </div>
   );

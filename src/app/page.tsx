@@ -77,25 +77,38 @@ export default function LandingPage() {
             <div className="flex items-center bg-white/80 border border-black/10 rounded-full px-3 py-1.5 gap-2 text-xs font-medium shadow-xs">
               <span className="text-slate-400 font-semibold pl-1">How to</span>
               <span className="text-slate-300">|</span>
-              {howToSteps.map((step, idx) => (
-                <button
-                  key={step.tag}
-                  onClick={() => setActiveStep(idx)}
-                  className={`px-3 py-1 rounded-full transition-all cursor-pointer border-0 ${
-                    activeStep === idx ? "bg-[#1A1A1A] text-white font-bold" : "text-slate-600 hover:text-black bg-transparent"
-                  }`}
-                >
-                  {step.tag}
-                </button>
-              ))}
+              <Link
+                href="/how-to/start"
+                className="px-3 py-1 rounded-full text-slate-600 hover:text-black hover:bg-slate-100 transition-all no-underline"
+              >
+                Start
+              </Link>
+              <Link
+                href="/how-to/build"
+                className="px-3 py-1 rounded-full text-slate-600 hover:text-black hover:bg-slate-100 transition-all no-underline"
+              >
+                Build
+              </Link>
+              <Link
+                href="/how-to/sell"
+                className="px-3 py-1 rounded-full text-slate-600 hover:text-black hover:bg-slate-100 transition-all no-underline"
+              >
+                Sell
+              </Link>
+              <Link
+                href="/how-to/scale"
+                className="px-3 py-1 rounded-full text-slate-600 hover:text-black hover:bg-slate-100 transition-all no-underline"
+              >
+                Scale
+              </Link>
             </div>
 
-            <Link href="/pricing" className="text-xs font-medium text-slate-700 hover:text-black transition-colors no-underline">
-              Pricing
+            <Link href="/resources" className="text-xs font-medium text-slate-700 hover:text-black transition-colors no-underline">
+              Resources
             </Link>
 
             <Link href="/pricing" className="text-xs font-medium text-slate-700 hover:text-black transition-colors no-underline">
-              Resources
+              Pricing
             </Link>
 
             {/* Run a company CTA Button */}

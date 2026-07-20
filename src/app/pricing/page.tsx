@@ -97,6 +97,7 @@ export default function PricingPage() {
             <Link href="/how-to/build" className="text-[14px] font-[460] text-ink-secondary hover:text-ink transition-colors no-underline">Build</Link>
             <Link href="/how-to/sell" className="text-[14px] font-[460] text-ink-secondary hover:text-ink transition-colors no-underline">Sell</Link>
             <Link href="/how-to/scale" className="text-[14px] font-[460] text-ink-secondary hover:text-ink transition-colors no-underline">Scale</Link>
+            <Link href="/resources" className="text-[14px] font-[460] text-ink-secondary hover:text-ink transition-colors no-underline">Resources</Link>
             <Link href="/pricing" className="text-[14px] font-[520] text-ink no-underline">Pricing</Link>
           </nav>
           <Link href="/login" className="relative inline-flex items-center justify-center h-[37px] px-4 rounded-[8px] no-underline">
