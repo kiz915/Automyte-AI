@@ -901,3 +901,24 @@ body {
 .metric-infrequent-glitch {
   animation: metric-glitch 12s infinite;
 }
+
+.scanner-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--color-secondary, #005db7);
+  box-shadow: 0 0 10px var(--color-secondary-container, #5499fd);
+  animation: scan 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  opacity: 0.5;
+  z-index: 20;
+  pointer-events: none;
+}
+
+@keyframes scan {
+  0% { transform: translateY(0); opacity: 0; }
+  10% { opacity: 0.5; }
+  90% { opacity: 0.5; }
+  100% { transform: translateY(500px); opacity: 0; }
+}
