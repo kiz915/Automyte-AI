@@ -1,7 +1,7 @@
 "use client";
 
 /* ============================================================
-   AUTOMYTE AI v2.0 — Cofounder.co Top Header Navigation
+   AUTOMYTE AI — Top Header Navigation
    ============================================================ */
 
 import React, { useEffect, useState } from "react";

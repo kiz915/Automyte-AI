@@ -226,7 +226,7 @@ export default function PricingPage() {
         <div className="mx-auto max-w-[600px] px-6 text-center">
           <h2 className="text-[28px] font-[500] text-white mb-3">Run an entire company with AI agents</h2>
           <p className="text-[15px] text-white/60 mb-6">Automyte is an agent orchestration platform designed to run an entire business.</p>
-          <Link href="/login" className="relative inline-flex items-center justify-center h-[41px] px-6 rounded-[8px] no-underline">
+          <Link href="/onboarding" className="relative inline-flex items-center justify-center h-[41px] px-6 rounded-[8px] no-underline">
             <span aria-hidden="true" className="pointer-events-none absolute inset-0 rounded-[8px] cta-btn" />
             <span className="relative z-10 text-[15px] font-[460] text-[#1a1a1a]">Run a company</span>
           </Link>

@@ -1,7 +1,7 @@
 "use client";
 
 /* ============================================================
-   AUTOMYTE AI v2.0 — Cofounder.co Onboarding Workflow
+   AUTOMYTE AI — Onboarding Workflow
    ============================================================ */
 
 import { useState } from "react";
@@ -203,11 +203,11 @@ export default function OnboardingPage() {
               {/* Outer Orbit Circle */}
               <circle cx="220" cy="220" r="150" stroke="rgba(0,0,0,0.08)" strokeWidth="1" strokeDasharray="3 3" fill="none" />
 
-              {/* Central Cofounder Node */}
+              {/* Central Automyte Node */}
               <g className="cursor-pointer">
                 <rect x="170" y="195" width="100" height="50" rx="14" fill="#FFFFFF" stroke="rgba(0,0,0,0.12)" strokeWidth="1.2" />
                 <text x="220" y="215" textAnchor="middle" fontSize="14">🌻</text>
-                <text x="220" y="233" textAnchor="middle" fontSize="11" fontStyle="italic" fontFamily="Georgia, serif" fill="#1A1A1A">Cofounder</text>
+                <text x="220" y="233" textAnchor="middle" fontSize="11" fontStyle="italic" fontFamily="Georgia, serif" fill="#1A1A1A">Automyte</text>
               </g>
 
               {/* Spawning Department Nodes */}

@@ -1,5 +1,5 @@
 /* ============================================================
-   AUTOMYTE AI v2.0 — Cofounder.co Canvas Workspace Route
+   AUTOMYTE AI — Canvas Workspace Route
    ============================================================ */
 
 import HomePage from "../(dashboard)/home/page";

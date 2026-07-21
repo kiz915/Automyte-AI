@@ -1,7 +1,7 @@
 "use client";
 
 /* ============================================================
-   AUTOMYTE AI v2.0 — Cofounder.co Orchestration Canvas Dashboard
+   AUTOMYTE AI — Orchestration Canvas Dashboard
    ============================================================ */
 
 import Link from "next/link";
@@ -42,7 +42,7 @@ import {
   DEPARTMENT_CONFIGS
 } from "@/types/focus-mode";
 
-// Departments meta matching cofounder.co layout
+// Departments meta
 const departments = [
   { id: "engineering", label: "Engineering", angle: 0, status: "active", agentName: "Kai", icon: "⚙", desc: "Kai coordinates code & infrastructure" },
   { id: "sales", label: "Sales", angle: 45, status: "idle", agentName: "Ryan", icon: "📈", desc: "Ryan automates outreach & pipelines" },
@@ -62,7 +62,7 @@ interface ChatMessage {
 export default function HomePage() {
   const [hoveredDept, setHoveredDept] = useState<string | null>(null);
   const [selectedDept, setSelectedDept] = useState<string | null>(null); // Null means global tabs, string means active agent chat
-  const [activeTab, setActiveTab] = useState<"home" | "cofounder" | "company" | "tasks" | "library">("home");
+  const [activeTab, setActiveTab] = useState<"home" | "automyte" | "company" | "tasks" | "library">("home");
 
   // Focus Mode States
   const [isFocusModeActive, setIsFocusModeActive] = useState<boolean>(true);
@@ -688,7 +688,7 @@ export default function HomePage() {
               <div className="flex border-b border-white/10 bg-[#1A1A22] px-3 pt-2 gap-1 select-none">
                 {[
                   { id: "home", label: "Home", icon: <Home className="w-3.5 h-3.5" /> },
-                  { id: "cofounder", label: "Cofounder", icon: <MessageSquare className="w-3.5 h-3.5" /> },
+                  { id: "automyte", label: "Automyte", icon: <MessageSquare className="w-3.5 h-3.5" /> },
                   { id: "company", label: "Company", icon: <Briefcase className="w-3.5 h-3.5" /> },
                   { id: "tasks", label: "Tasks", icon: <CheckSquare className="w-3.5 h-3.5" /> },
                   { id: "library", label: "Library", icon: <FolderOpen className="w-3.5 h-3.5" /> },
@@ -750,7 +750,7 @@ export default function HomePage() {
               )}
 
               {/* TAB CONTENT: COFOUNDER (GENERAL CHAT) */}
-              {activeTab === "cofounder" && (
+              {activeTab === "automyte" && (
                 <div className="flex-1 flex flex-col overflow-hidden">
                   <div className="flex-1 overflow-y-auto p-5 space-y-4">
                     {globalChatMessages.map((msg, index) => (
@@ -777,7 +777,7 @@ export default function HomePage() {
                         onKeyDown={(e) => {
                           if (e.key === "Enter") handleGlobalChatSend();
                         }}
-                        placeholder="Ask Cofounder anything about your company..."
+                        placeholder="Ask Automyte anything about your company..."
                         className="flex-1 border-0 bg-transparent focus:outline-none text-xs text-white px-2 py-1 placeholder-slate-500"
                       />
                       <button
