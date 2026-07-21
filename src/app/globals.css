@@ -462,3 +462,114 @@ body {
 .page-enter {
   animation: page-fade-in 0.4s var(--ease-out-expo) forwards;
 }
+
+/* ============================================================
+   Focus Mode Panel CSS Custom Properties & Quiet Animations
+   ============================================================ */
+
+:root {
+  --dept-engineering: #3B82F6;
+  --dept-marketing: #F97316;
+  --dept-finance: #14B8A6;
+  --dept-design: #8B5CF6;
+  --dept-sales: #F59E0B;
+  --dept-operations: #10B981;
+  --dept-legal: #6366F1;
+  --dept-support: #EC4899;
+}
+
+/* Department theme color utilities */
+.dept-color-engineering { color: var(--dept-engineering); }
+.dept-bg-engineering { background-color: var(--dept-engineering); }
+.dept-border-engineering { border-color: var(--dept-engineering); }
+
+.dept-color-marketing { color: var(--dept-marketing); }
+.dept-bg-marketing { background-color: var(--dept-marketing); }
+.dept-border-marketing { border-color: var(--dept-marketing); }
+
+.dept-color-finance { color: var(--dept-finance); }
+.dept-bg-finance { background-color: var(--dept-finance); }
+.dept-border-finance { border-color: var(--dept-finance); }
+
+.dept-color-design { color: var(--dept-design); }
+.dept-bg-design { background-color: var(--dept-design); }
+.dept-border-design { border-color: var(--dept-design); }
+
+.dept-color-sales { color: var(--dept-sales); }
+.dept-bg-sales { background-color: var(--dept-sales); }
+.dept-border-sales { border-color: var(--dept-sales); }
+
+/* Live Status Dot Pulse — opacity 1 -> 0.4 -> 1 over 1.6s */
+@keyframes live-status-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(0.96);
+  }
+}
+
+.focus-dot-active {
+  background-color: var(--color-success, #22C55E);
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.45);
+  animation: live-status-pulse 1.6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.focus-dot-idle {
+  background-color: #94A3B8;
+  opacity: 0.7;
+}
+
+.focus-dot-approval {
+  background-color: #F59E0B;
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.45);
+  animation: live-status-pulse 1.6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.focus-dot-error {
+  background-color: #EF4444;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.45);
+}
+
+/* Eased Progress Bar Transition — width 300ms cubic-bezier(0.4, 0, 0.2, 1) */
+.focus-progress-bar-fill {
+  transition: width 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: width;
+}
+
+/* Eased Step List item transitions */
+.focus-step-item {
+  transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Soft spinning ring icon for active step */
+@keyframes step-ring-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.focus-ring-spinner {
+  animation: step-ring-spin 1.2s linear infinite;
+}
+
+/* Settling collapse transition */
+.focus-settle-collapse {
+  transition: max-height 350ms cubic-bezier(0.16, 1, 0.3, 1), opacity 250ms ease-out;
+}
+
+/* Accessibility: prefers-reduced-motion fallback */
+@media (prefers-reduced-motion: reduce) {
+  .focus-dot-active,
+  .focus-dot-approval,
+  .focus-ring-spinner {
+    animation: none !important;
+  }
+  .focus-progress-bar-fill,
+  .focus-step-item,
+  .focus-settle-collapse {
+    transition: none !important;
+  }
+}

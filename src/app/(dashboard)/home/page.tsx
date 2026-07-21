@@ -24,8 +24,23 @@ import {
   Folder,
   ArrowLeft,
   Download,
-  Save
+  Save,
+  Layers,
+  Target,
+  Eye
 } from "lucide-react";
+
+import { FocusModePanel } from "@/components/canvas/focus-mode-panel";
+import { FocusModeDemoControls } from "@/components/canvas/focus-mode-demo-controls";
+import {
+  DepartmentId,
+  AgentStatus,
+  FocusAgent,
+  FocusTask,
+  DEFAULT_FOCUS_AGENTS,
+  SAMPLE_TASKS_BY_DEPT,
+  DEPARTMENT_CONFIGS
+} from "@/types/focus-mode";
 
 // Departments meta matching cofounder.co layout
 const departments = [
@@ -48,6 +63,12 @@ export default function HomePage() {
   const [hoveredDept, setHoveredDept] = useState<string | null>(null);
   const [selectedDept, setSelectedDept] = useState<string | null>(null); // Null means global tabs, string means active agent chat
   const [activeTab, setActiveTab] = useState<"home" | "cofounder" | "company" | "tasks" | "library">("home");
+
+  // Focus Mode States
+  const [isFocusModeActive, setIsFocusModeActive] = useState<boolean>(true);
+  const [focusedDept, setFocusedDept] = useState<DepartmentId>("engineering");
+  const [focusedStatus, setFocusedStatus] = useState<AgentStatus>("working");
+  const [customTaskOverrides, setCustomTaskOverrides] = useState<Record<string, FocusTask>>({});
 
   // Global Data States
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -284,6 +305,96 @@ export default function HomePage() {
     }
   }, []);
 
+  // Active Focus Agent & Task computation
+  const currentFocusAgent: FocusAgent = DEFAULT_FOCUS_AGENTS[focusedDept] || DEFAULT_FOCUS_AGENTS.engineering;
+  const baseTask = SAMPLE_TASKS_BY_DEPT[focusedDept]?.[focusedStatus] || SAMPLE_TASKS_BY_DEPT.engineering.working;
+  const currentFocusTask: FocusTask = customTaskOverrides[focusedDept] || baseTask;
+
+  const handleApproveFocusTask = (taskId: string) => {
+    setFocusedStatus("working");
+    const updatedTask: FocusTask = {
+      ...currentFocusTask,
+      status: "working",
+      progressPercent: Math.min(100, currentFocusTask.progressPercent + 25),
+      approvalCallout: undefined,
+      logs: [
+        ...(currentFocusTask.logs || []),
+        {
+          id: `log-app-${Date.now()}`,
+          timestamp: new Date().toLocaleTimeString('en-US', { hour12: false }),
+          level: "success",
+          text: "Founder approved execution. Proceeding with migration step.",
+        },
+      ],
+    };
+    setCustomTaskOverrides((prev) => ({ ...prev, [focusedDept]: updatedTask }));
+  };
+
+  const handleRejectFocusTask = (taskId: string) => {
+    setFocusedStatus("idle");
+    const updatedTask: FocusTask = {
+      ...currentFocusTask,
+      status: "idle",
+      approvalCallout: undefined,
+    };
+    setCustomTaskOverrides((prev) => ({ ...prev, [focusedDept]: updatedTask }));
+  };
+
+  const handleRetryFocusTask = (taskId: string) => {
+    setFocusedStatus("working");
+    const updatedTask: FocusTask = {
+      ...currentFocusTask,
+      status: "working",
+      progressPercent: 35,
+      errorInfo: undefined,
+      logs: [
+        ...(currentFocusTask.logs || []),
+        {
+          id: `log-retry-${Date.now()}`,
+          timestamp: new Date().toLocaleTimeString('en-US', { hour12: false }),
+          level: "info",
+          text: "Retrying failed task step with refreshed authorization tokens...",
+        },
+      ],
+    };
+    setCustomTaskOverrides((prev) => ({ ...prev, [focusedDept]: updatedTask }));
+  };
+
+  const handleSimulateNextStep = () => {
+    const activeStepIdx = currentFocusTask.steps.findIndex((s) => s.state === "active");
+    if (activeStepIdx >= 0 && activeStepIdx < currentFocusTask.steps.length - 1) {
+      const updatedSteps = currentFocusTask.steps.map((s, idx) => {
+        if (idx === activeStepIdx) return { ...s, state: "completed" as const };
+        if (idx === activeStepIdx + 1) return { ...s, state: "active" as const };
+        return s;
+      });
+      const newProgress = Math.min(95, Math.round(((activeStepIdx + 2) / currentFocusTask.steps.length) * 100));
+      const updatedTask: FocusTask = {
+        ...currentFocusTask,
+        steps: updatedSteps,
+        progressPercent: newProgress,
+      };
+      setCustomTaskOverrides((prev) => ({ ...prev, [focusedDept]: updatedTask }));
+    } else {
+      handleSimulateCompleteTask();
+    }
+  };
+
+  const handleSimulateCompleteTask = () => {
+    const completedSteps = currentFocusTask.steps.map((s) => ({ ...s, state: "completed" as const }));
+    const settledTask: FocusTask = {
+      ...currentFocusTask,
+      steps: completedSteps,
+      progressPercent: 100,
+      isSettled: true,
+    };
+    setCustomTaskOverrides((prev) => ({ ...prev, [focusedDept]: settledTask }));
+
+    setTimeout(() => {
+      setFocusedStatus("idle");
+    }, 2800);
+  };
+
   const selectedDeptObj = departments.find((d) => d.id === selectedDept);
 
   return (
@@ -296,10 +407,34 @@ export default function HomePage() {
 
       <div className="flex-1 flex overflow-hidden relative">
         {/* Left Pane — Interactive Orchestrator Canvas */}
-        <div className="flex-1 relative flex items-center justify-center border-r border-white/[0.08] bg-[#141419]">
-          <div className="absolute top-4 left-4 flex items-center gap-1.5 bg-white/[0.05] px-2.5 py-1 rounded-md border border-white/[0.08]">
-            <span className="mono text-[10px] text-slate-400">Z</span>
-            <span className="text-[10px] font-medium text-slate-200">100%</span>
+        <div className="flex-1 relative flex flex-col items-center justify-center border-r border-white/[0.08] bg-[#141419]">
+          {/* Top Canvas Controls Bar */}
+          <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10 pointer-events-none">
+            <div className="flex items-center gap-2 pointer-events-auto">
+              <div className="flex items-center gap-1.5 bg-white/[0.05] px-2.5 py-1 rounded-md border border-white/[0.08]">
+                <span className="mono text-[10px] text-slate-400">Z</span>
+                <span className="text-[10px] font-medium text-slate-200">100%</span>
+              </div>
+              <div className="flex items-center gap-1.5 bg-[#1C1C26] px-2.5 py-1 rounded-md border border-white/[0.12] text-[11px] text-slate-300">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span>5 Agents Active</span>
+              </div>
+            </div>
+
+            {/* Focus Mode Toggle Pill */}
+            <div className="pointer-events-auto flex items-center gap-2">
+              <button
+                onClick={() => setIsFocusModeActive(!isFocusModeActive)}
+                className={`px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-2 transition-all cursor-pointer shadow-lg border ${
+                  isFocusModeActive
+                    ? "bg-amber-500 text-slate-950 border-amber-400 font-extrabold shadow-amber-500/20"
+                    : "bg-[#1F1F2A] text-slate-300 border-white/10 hover:bg-white/10 hover:text-white"
+                }`}
+              >
+                <Target className="w-3.5 h-3.5" />
+                <span>Focus Mode {isFocusModeActive ? "(Active)" : ""}</span>
+              </button>
+            </div>
           </div>
 
           {/* SVG Diagram Canvas */}
@@ -316,7 +451,8 @@ export default function HomePage() {
                 const innerX = cx + 55 * Math.cos(rad - Math.PI / 2);
                 const innerY = cy + 55 * Math.sin(rad - Math.PI / 2);
                 const isHovered = hoveredDept === dept.id;
-                const isSelected = selectedDept === dept.id;
+                const isSelected = selectedDept === dept.id || (isFocusModeActive && focusedDept === dept.id);
+                const isFocused = isFocusModeActive && focusedDept === dept.id;
 
                 return (
                   <g key={dept.id}>
@@ -332,9 +468,13 @@ export default function HomePage() {
                       cx={outerX} cy={outerY} 
                       r={isSelected ? "16" : isHovered ? "13" : "11"}
                       fill={isSelected ? "#24242D" : isHovered ? "#1E1E26" : "#181820"}
-                      stroke={isSelected ? "#F2B705" : isHovered ? "rgba(242,183,5,0.6)" : "rgba(255,255,255,0.2)"}
-                      strokeWidth={isSelected ? "2" : "1"}
-                      onClick={() => setSelectedDept(dept.id)}
+                      stroke={isFocused ? DEPARTMENT_CONFIGS[dept.id as DepartmentId]?.accentColor || "#F2B705" : isSelected ? "#F2B705" : isHovered ? "rgba(242,183,5,0.6)" : "rgba(255,255,255,0.2)"}
+                      strokeWidth={isFocused ? "3 font-bold" : isSelected ? "2" : "1"}
+                      onClick={() => {
+                        setSelectedDept(dept.id);
+                        setFocusedDept(dept.id as DepartmentId);
+                        setIsFocusModeActive(true);
+                      }}
                       onMouseEnter={() => setHoveredDept(dept.id)}
                       onMouseLeave={() => setHoveredDept(null)}
                       className="cursor-pointer transition-all duration-300"
@@ -388,26 +528,24 @@ export default function HomePage() {
             </svg>
           </div>
 
-          {/* Floating Bottom Left Notification Bell */}
-          <button 
-            className="absolute bottom-5 left-5 w-10 h-10 rounded-xl bg-[#1C1C24] border border-white/10 flex items-center justify-center text-slate-300 hover:text-white hover:bg-[#252530] transition-colors shadow-lg"
-            title="Notifications"
-          >
-            🔔
-          </button>
-
-          {/* Floating Bottom Center Plus Button */}
-          <button 
-            onClick={() => setIsTechTreeOpen(true)}
-            className="absolute bottom-5 left-1/2 -translate-x-1/2 w-10 h-10 rounded-xl bg-amber-500 text-slate-950 font-extrabold flex items-center justify-center hover:bg-amber-400 transition-colors shadow-lg"
-            title="Add Node / Launch Task"
-          >
-            +
-          </button>
+          {/* Floating Bottom Center Interactive Focus Mode Tester */}
+          <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-20 w-[420px]">
+            <FocusModeDemoControls
+              selectedDept={focusedDept}
+              selectedStatus={focusedStatus}
+              onSelectDept={(dept) => {
+                setFocusedDept(dept);
+                setIsFocusModeActive(true);
+              }}
+              onSelectStatus={(status) => setFocusedStatus(status)}
+              onSimulateNextStep={handleSimulateNextStep}
+              onSimulateComplete={handleSimulateCompleteTask}
+            />
+          </div>
 
           {/* Floating Bottom Left Toast Popup */}
           {showToast && (
-            <div className="absolute bottom-16 left-5 max-w-xs bg-[#1A1A22] border border-white/10 p-3.5 rounded-xl shadow-2xl space-y-2 text-xs">
+            <div className="absolute bottom-24 left-5 max-w-xs bg-[#1A1A22] border border-white/10 p-3.5 rounded-xl shadow-2xl space-y-2 text-xs z-10">
               <div className="flex items-center justify-between">
                 <span className="font-bold text-amber-400">New Models Are Live</span>
                 <div className="flex items-center gap-2">
@@ -418,19 +556,64 @@ export default function HomePage() {
               <p className="text-slate-300 text-[11px] leading-relaxed">
                 Grok 4.5, GPT-5.6 Sol, GPT-5.6 Terra, and Muse Spark 1.1 are now available in Automyte.
               </p>
-              <button 
-                onClick={() => setIsTechTreeOpen(true)}
-                className="w-full py-1.5 rounded-lg bg-white/10 hover:bg-white/15 text-white font-medium text-[11px] transition-colors"
-              >
-                See what's new
-              </button>
             </div>
           )}
         </div>
 
-        {/* Right Pane — Dynamic Tabbed / Agent Workspace Panel */}
+        {/* Right Pane — Dynamic Tabbed / Focus Mode / Agent Workspace Panel */}
         <div className="w-[480px] bg-[#16161C] border-l border-white/[0.08] flex flex-col overflow-hidden shadow-2xl">
-          {selectedDept ? (
+          {/* Mode Selector Header */}
+          <div className="flex items-center justify-between px-4 py-2 bg-[#14141A] border-b border-white/10 select-none">
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => setIsFocusModeActive(true)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors border-0 cursor-pointer ${
+                  isFocusModeActive
+                    ? "bg-amber-500 text-slate-950 shadow-md font-extrabold"
+                    : "bg-transparent text-slate-400 hover:text-white"
+                }`}
+              >
+                <Target className="w-3.5 h-3.5" />
+                Focus Mode
+              </button>
+              <button
+                onClick={() => setIsFocusModeActive(false)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors border-0 cursor-pointer ${
+                  !isFocusModeActive
+                    ? "bg-white/10 text-white font-bold"
+                    : "bg-transparent text-slate-400 hover:text-white"
+                }`}
+              >
+                <Layers className="w-3.5 h-3.5" />
+                Multi-Agent Tabs
+              </button>
+            </div>
+
+            {isFocusModeActive && (
+              <span className="text-[10px] font-mono font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
+                {currentFocusAgent.name} ({currentFocusAgent.departmentLabel})
+              </span>
+            )}
+          </div>
+
+          {isFocusModeActive ? (
+            /* FOCUS MODE PANEL CONTAINER */
+            <div className="flex-1 p-5 overflow-y-auto flex items-start justify-center bg-[#131318]">
+              <FocusModePanel
+                agent={currentFocusAgent}
+                task={currentFocusTask}
+                allAgents={Object.values(DEFAULT_FOCUS_AGENTS)}
+                onClose={() => setIsFocusModeActive(false)}
+                onSwitchAgent={(agentId) => {
+                  const targetAgent = Object.values(DEFAULT_FOCUS_AGENTS).find((a) => a.id === agentId);
+                  if (targetAgent) setFocusedDept(targetAgent.departmentId);
+                }}
+                onApprove={handleApproveFocusTask}
+                onReject={handleRejectFocusTask}
+                onRetry={handleRetryFocusTask}
+              />
+            </div>
+          ) : selectedDept ? (
             /* DEPARTMENT CHAT PANEL WORKSPACE */
             <div className="flex-1 flex flex-col overflow-hidden">
               {/* Header */}
