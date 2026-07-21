@@ -6,17 +6,24 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { ArrowRight, Zap, Target, Users, LineChart, Sparkles, Check } from "lucide-react";
+import { ArrowRight, Zap, Target, Users, LineChart, Sparkles, Check, Play, Pause } from "lucide-react";
+import { FocusModePanel } from "@/components/canvas/focus-mode-panel";
+import {
+  DepartmentId,
+  DEFAULT_FOCUS_AGENTS,
+  SAMPLE_TASKS_BY_DEPT,
+  DEPARTMENT_CONFIGS
+} from "@/types/focus-mode";
 
-const departments = [
-  { label: "Engineering", angle: 0 },
-  { label: "Sales", angle: 45 },
-  { label: "Marketing", angle: 90 },
-  { label: "Design", angle: 135 },
-  { label: "Finance", angle: 180 },
-  { label: "Operations", angle: 225 },
-  { label: "Legal", angle: 270 },
-  { label: "Support", angle: 315 },
+const departments: { id: DepartmentId; label: string; angle: number; icon: string }[] = [
+  { id: "engineering", label: "Engineering", angle: 0, icon: "⚙" },
+  { id: "sales", label: "Sales", angle: 45, icon: "📈" },
+  { id: "marketing", label: "Marketing", angle: 90, icon: "📣" },
+  { id: "design", label: "Design", angle: 135, icon: "🎨" },
+  { id: "finance", label: "Finance", angle: 180, icon: "💰" },
+  { id: "operations", label: "Operations", angle: 225, icon: "🔧" },
+  { id: "legal", label: "Legal", angle: 270, icon: "⚖" },
+  { id: "support", label: "Support", angle: 315, icon: "💬" },
 ];
 
 const howToSteps = [
@@ -58,6 +65,26 @@ const socialProofCompanies = ["ActiveGraph", "DentalFlow", "LearnPath", "Valence
 
 export default function LandingPage() {
   const [activeStep, setActiveStep] = useState(0);
+
+  // Focus Mode Landing Demo State
+  const [heroFocusedDept, setHeroFocusedDept] = useState<DepartmentId>("engineering");
+  const [isAutoCycling, setIsAutoCycling] = useState<boolean>(true);
+
+  // Auto-cycle through departments every 5 seconds to demonstrate Focus Mode in action
+  useEffect(() => {
+    if (!isAutoCycling) return;
+    const depts: DepartmentId[] = ["engineering", "marketing", "finance", "design", "sales"];
+    const interval = setInterval(() => {
+      setHeroFocusedDept((prev) => {
+        const nextIdx = (depts.indexOf(prev) + 1) % depts.length;
+        return depts[nextIdx];
+      });
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [isAutoCycling]);
+
+  const activeHeroAgent = DEFAULT_FOCUS_AGENTS[heroFocusedDept] || DEFAULT_FOCUS_AGENTS.engineering;
+  const activeHeroTask = SAMPLE_TASKS_BY_DEPT[heroFocusedDept]?.working || SAMPLE_TASKS_BY_DEPT.engineering.working;
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F7F6F2] text-[#1A1A1A] font-sans select-none overflow-x-hidden">
@@ -140,7 +167,7 @@ export default function LandingPage() {
 
         {/* Subtitle */}
         <p className="text-base text-slate-600 max-w-2xl mx-auto leading-relaxed">
-          Brief your AI cofounder, scaffold your product codebase, launch outbound sales campaigns, and scale your operations from a single unified canvas.
+          Brief your AI cofounder, scaffold your product codebase, launch outbound sales campaigns, and scale your operations with single-agent <strong className="text-black">Focus Mode</strong> clarity.
         </p>
 
         {/* CTA Buttons */}
@@ -162,73 +189,144 @@ export default function LandingPage() {
       </section>
 
       {/* ============================================================ */}
-      {/* HERO CANVAS MOCKUP DEMO WINDOW */}
+      {/* HERO INTERACTIVE FOCUS MODE DEMO WINDOW */}
       {/* ============================================================ */}
       <section className="px-6 pb-24 max-w-6xl mx-auto w-full">
-        <div className="bg-white border border-black/10 rounded-3xl p-6 shadow-2xl overflow-hidden relative">
-          {/* Mockup Top Window Bar */}
-          <div className="flex items-center justify-between border-b border-black/5 pb-4 mb-6 text-xs text-slate-400">
+        <div className="bg-[#121217] border border-white/10 rounded-3xl p-6 shadow-2xl overflow-hidden relative">
+          {/* Window Top Bar */}
+          <div className="flex items-center justify-between border-b border-white/10 pb-4 mb-6 text-xs text-slate-400">
             <div className="flex items-center gap-2">
-              <span className="w-3 h-3 rounded-full bg-rose-400" />
-              <span className="w-3 h-3 rounded-full bg-amber-400" />
-              <span className="w-3 h-3 rounded-full bg-emerald-400" />
-              <span className="ml-4 font-mono text-[11px] text-slate-600">app.automyte.ai/canvas</span>
+              <span className="w-3 h-3 rounded-full bg-rose-500/80" />
+              <span className="w-3 h-3 rounded-full bg-amber-500/80" />
+              <span className="w-3 h-3 rounded-full bg-emerald-500/80" />
+              <span className="ml-4 font-mono text-[11px] text-slate-300">app.automyte.ai/canvas — Focus Mode Live Preview</span>
             </div>
-            <div className="flex items-center gap-4 text-[11px]">
-              <span>Z 60%</span>
-              <span>📁 Q</span>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setIsAutoCycling(!isAutoCycling)}
+                className="px-2.5 py-1 rounded-md bg-white/10 hover:bg-white/15 text-[11px] font-medium text-slate-200 flex items-center gap-1.5 transition-colors border-0 cursor-pointer"
+              >
+                {isAutoCycling ? <Pause className="w-3 h-3 text-amber-400" /> : <Play className="w-3 h-3 text-emerald-400" />}
+                <span>{isAutoCycling ? "Auto-cycling" : "Paused"}</span>
+              </button>
             </div>
           </div>
 
           {/* Grid Layout inside Mockup Window */}
-          <div className="grid lg:grid-cols-12 gap-8 items-center min-h-[420px]">
+          <div className="grid lg:grid-cols-12 gap-8 items-center min-h-[460px]">
             {/* Left Canvas Node Orbit Diagram */}
-            <div className="lg:col-span-7 relative flex items-center justify-center p-8 bg-[#FAF9F6] rounded-2xl border border-black/5">
+            <div className="lg:col-span-6 relative flex flex-col items-center justify-center p-6 bg-[#161620] rounded-2xl border border-white/10">
+              <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                <Target className="w-3.5 h-3.5 text-amber-400" />
+                <span>Click Any Agent Node To Focus</span>
+              </div>
+
               <svg viewBox="0 0 440 440" className="w-full max-w-md aspect-square">
                 {/* Outer Orbit Circle */}
-                <circle cx="220" cy="220" r="140" stroke="rgba(0,0,0,0.08)" strokeWidth="1" strokeDasharray="3 3" fill="none" />
+                <circle cx="220" cy="220" r="140" stroke="rgba(255,255,255,0.1)" strokeWidth="1" strokeDasharray="3 3" fill="none" />
 
                 {/* Orbit Lines & Nodes */}
-                {departments.map((dept, i) => {
+                {departments.map((dept) => {
                   const rad = (dept.angle * Math.PI) / 180;
                   const x = 220 + 140 * Math.cos(rad - Math.PI / 2);
                   const y = 220 + 140 * Math.sin(rad - Math.PI / 2);
+                  const isFocused = heroFocusedDept === dept.id;
+                  const cfg = DEPARTMENT_CONFIGS[dept.id] || DEPARTMENT_CONFIGS.engineering;
+
                   return (
-                    <g key={dept.label}>
-                      <line x1="220" y1="220" x2={x} y2={y} stroke="rgba(0,0,0,0.08)" strokeDasharray="3 3" />
-                      <circle cx={x} cy={y} r="10" fill="#FFFFFF" stroke="rgba(0,0,0,0.15)" strokeWidth="1" />
-                      <text x={x} y={y + 22} textAnchor="middle" fontSize="9" fontWeight="600" fill="#444444">
+                    <g
+                      key={dept.id}
+                      className="cursor-pointer group"
+                      onClick={() => {
+                        setIsAutoCycling(false);
+                        setHeroFocusedDept(dept.id);
+                      }}
+                    >
+                      <line
+                        x1="220" y1="220" x2={x} y2={y}
+                        stroke={isFocused ? cfg.accentColor : "rgba(255,255,255,0.12)"}
+                        strokeWidth={isFocused ? "2" : "1"}
+                        strokeDasharray="4 4"
+                      />
+                      <circle
+                        cx={x} cy={y}
+                        r={isFocused ? "16" : "12"}
+                        fill={isFocused ? "#242432" : "#1A1A24"}
+                        stroke={isFocused ? cfg.accentColor : "rgba(255,255,255,0.2)"}
+                        strokeWidth={isFocused ? "3" : "1"}
+                        className="transition-all duration-300 group-hover:scale-110"
+                      />
+                      <text x={x} y={y + 3.5} textAnchor="middle" fontSize={isFocused ? "12" : "10"} className="pointer-events-none select-none">
+                        {dept.icon}
+                      </text>
+                      {/* Pulse ring for active focused node */}
+                      {isFocused && (
+                        <circle cx={x} cy={y} r="22" fill="none" stroke={cfg.accentColor} strokeWidth="1.5" className="animate-ping opacity-30" />
+                      )}
+                      <text
+                        x={x} y={y + 26}
+                        textAnchor="middle"
+                        fontSize="9.5"
+                        fontWeight={isFocused ? "700" : "500"}
+                        fill={isFocused ? cfg.accentColor : "rgba(255,255,255,0.6)"}
+                        className="pointer-events-none select-none transition-colors"
+                      >
                         {dept.label}
                       </text>
                     </g>
                   );
                 })}
 
-                {/* Center Node */}
+                {/* Center Core */}
                 <g>
-                  <rect x="170" y="195" width="100" height="50" rx="14" fill="#FFFFFF" stroke="rgba(0,0,0,0.12)" strokeWidth="1.2" />
-                  <text x="220" y="214" textAnchor="middle" fontSize="14">🌻</text>
-                  <text x="220" y="232" textAnchor="middle" fontSize="11" fontStyle="italic" fontFamily="Georgia, serif" fill="#1A1A1A">Automyte</text>
+                  <circle cx="220" cy="220" r="38" fill="#1E1E2A" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5" />
+                  <text x="220" y="214" textAnchor="middle" fontSize="16">🌻</text>
+                  <text x="220" y="232" textAnchor="middle" fontSize="8.5" fontWeight="700" fill="#FFFFFF" letterSpacing="0.05em">AUTOMYTE</text>
                 </g>
               </svg>
+
+              {/* Department selector pill bar on landing page */}
+              <div className="flex items-center gap-1.5 overflow-x-auto w-full pt-2 justify-center">
+                {(["engineering", "marketing", "finance", "design", "sales"] as DepartmentId[]).map((d) => {
+                  const isSelected = heroFocusedDept === d;
+                  const cfg = DEPARTMENT_CONFIGS[d];
+                  return (
+                    <button
+                      key={d}
+                      onClick={() => {
+                        setIsAutoCycling(false);
+                        setHeroFocusedDept(d);
+                      }}
+                      className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all border cursor-pointer ${
+                        isSelected
+                          ? "text-white border-white/30 shadow-md"
+                          : "bg-white/5 text-slate-400 border-white/10 hover:text-white"
+                      }`}
+                      style={{
+                        backgroundColor: isSelected ? cfg.accentColor : undefined,
+                      }}
+                    >
+                      {cfg.icon} {d}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
-            {/* Right Panel Tabbed Preview */}
-            <div className="lg:col-span-5 bg-[#181820] text-white p-6 rounded-2xl space-y-6 shadow-lg">
-              {/* Header Tabs */}
-              <div className="flex border-b border-white/10 pb-3 gap-4 text-xs font-semibold text-slate-400">
-                <span className="text-white border-b-2 border-amber-400 pb-2">Home</span>
-                <span>Company</span>
-                <span>Cofounder</span>
-                <span>Tasks</span>
-                <span>Library</span>
-              </div>
-
-              {/* Home Content */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-serif font-semibold text-white">Good morning, Founder</h3>
-                <p className="text-xs text-slate-400">Welcome back to your operational control center</p>
-              </div>
+            {/* Right Side Focus Mode Live Panel */}
+            <div className="lg:col-span-6 flex items-center justify-center">
+              <FocusModePanel
+                agent={activeHeroAgent}
+                task={activeHeroTask}
+                allAgents={Object.values(DEFAULT_FOCUS_AGENTS)}
+                onSwitchAgent={(agentId) => {
+                  const found = Object.values(DEFAULT_FOCUS_AGENTS).find((a) => a.id === agentId);
+                  if (found) {
+                    setIsAutoCycling(false);
+                    setHeroFocusedDept(found.departmentId);
+                  }
+                }}
+              />
             </div>
           </div>
         </div>
