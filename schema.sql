@@ -185,15 +185,36 @@ alter table public.documents enable row level security;
 alter table public.approvals enable row level security;
 alter table public.integrations enable row level security;
 
--- Row Level Security Policies
+-- Row Level Security Policies (Idempotent Drop & Create)
+drop policy if exists "Users can access their user profile" on public.users;
 create policy "Users can access their user profile" on public.users for all using (true);
+
+drop policy if exists "Users can access their workspaces" on public.workspaces;
 create policy "Users can access their workspaces" on public.workspaces for all using (true);
+
+drop policy if exists "Users can access companies" on public.companies;
 create policy "Users can access companies" on public.companies for all using (true);
+
+drop policy if exists "Users can access interviews" on public.company_interviews;
 create policy "Users can access interviews" on public.company_interviews for all using (true);
+
+drop policy if exists "Users can access analysis results" on public.ai_analysis_results;
 create policy "Users can access analysis results" on public.ai_analysis_results for all using (true);
+
+drop policy if exists "Users can access company memories" on public.company_memories;
 create policy "Users can access company memories" on public.company_memories for all using (true);
+
+drop policy if exists "Users can access startup profiles" on public.startup_profiles;
 create policy "Users can access startup profiles" on public.startup_profiles for all using (true);
+
+drop policy if exists "Users can access tasks" on public.tasks;
 create policy "Users can access tasks" on public.tasks for all using (true);
+
+drop policy if exists "Users can access documents" on public.documents;
 create policy "Users can access documents" on public.documents for all using (true);
+
+drop policy if exists "Users can access approvals" on public.approvals;
 create policy "Users can access approvals" on public.approvals for all using (true);
+
+drop policy if exists "Users can access integrations" on public.integrations;
 create policy "Users can access integrations" on public.integrations for all using (true);
