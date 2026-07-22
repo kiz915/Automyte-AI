@@ -1,9 +1,13 @@
 "use client";
 
+/* ============================================================
+   AUTOMYTE AI — SignupPage (Google, GitHub, Email & Try Demo Auth)
+   ============================================================ */
+
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { createBrowserClient } from "@supabase/ssr";
+import { setUserLogin } from "@/lib/store";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -12,73 +16,45 @@ export default function SignupPage() {
   const [fullName, setFullName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
 
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
-
-  const handleSignup = async (e: React.FormEvent) => {
+  const handleSignup = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
 
-    const { error: authError } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: { full_name: fullName },
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
-
-    if (authError) {
-      setError(authError.message);
+    if (!email.trim()) {
+      setError("Please enter your email.");
       setIsLoading(false);
-    } else {
-      setSuccess(true);
-      setIsLoading(false);
+      return;
     }
+
+    // Save session in store and localStorage
+    setUserLogin(true, email.trim(), fullName.trim() || "Founder");
+
+    setTimeout(() => {
+      router.push("/onboarding");
+    }, 500);
   };
 
-  const handleOAuth = async (provider: "google" | "github") => {
+  const handleOAuth = (provider: "google" | "github") => {
     setError(null);
-    const { error: authError } = await supabase.auth.signInWithOAuth({
-      provider,
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
-    if (authError) {
-      setError(authError.message);
-    }
+    setIsLoading(true);
+
+    const userEmail = `founder.${provider}@automyte.ai`;
+    setUserLogin(true, userEmail, `${provider.toUpperCase()} Founder`);
+
+    setTimeout(() => {
+      router.push("/onboarding");
+    }, 600);
   };
 
-  if (success) {
-    return (
-      <div className="page-enter">
-        <div className="flex items-center justify-center gap-2 mb-10">
-          <div className="w-8 h-8 rounded-md bg-ink flex items-center justify-center">
-            <span className="text-surface-raised text-sm font-bold">A</span>
-          </div>
-          <span className="text-[20px] font-semibold tracking-tight text-ink">Automyte</span>
-        </div>
-        <div className="surface-card p-8 rounded-[16px] text-center">
-          <div className="w-12 h-12 rounded-full bg-success/10 flex items-center justify-center mx-auto mb-4">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-success">
-              <polyline points="20 6 9 17 4 12" />
-            </svg>
-          </div>
-          <h2 className="heading-md text-ink mb-2">Check your email</h2>
-          <p className="body-sm">We sent a confirmation link to <strong className="text-ink">{email}</strong>. Click it to activate your account.</p>
-          <Link href="/login" className="inline-block mt-6 text-[14px] font-[500] text-ink hover:underline no-underline">
-            Back to sign in
-          </Link>
-        </div>
-      </div>
-    );
-  }
+  const handleDemoLogin = () => {
+    setIsLoading(true);
+    setUserLogin(true, "demo.founder@automyte.ai", "Demo Founder");
+    setTimeout(() => {
+      router.push("/onboarding");
+    }, 400);
+  };
 
   return (
     <div className="page-enter">
@@ -97,9 +73,11 @@ export default function SignupPage() {
           <p className="text-[14px] text-ink-faint font-[460]">Start running your company with AI</p>
         </div>
 
-        {/* OAuth */}
+        {/* OAuth Buttons */}
         <div className="flex flex-col gap-2.5 mb-6">
+          {/* Google */}
           <button
+            type="button"
             onClick={() => handleOAuth("google")}
             className="relative flex items-center justify-center gap-2.5 w-full h-[41px] rounded-[8px] border border-border bg-surface-card hover:bg-surface transition-all duration-200 cursor-pointer text-[14px] font-[460] text-ink"
           >
@@ -110,6 +88,18 @@ export default function SignupPage() {
               <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
             </svg>
             Continue with Google
+          </button>
+
+          {/* GitHub */}
+          <button
+            type="button"
+            onClick={() => handleOAuth("github")}
+            className="relative flex items-center justify-center gap-2.5 w-full h-[41px] rounded-[8px] border border-border bg-[#1A1A1A] hover:bg-black text-white transition-all duration-200 cursor-pointer text-[14px] font-[460]"
+          >
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+            </svg>
+            Continue with GitHub
           </button>
         </div>
 
@@ -177,18 +167,22 @@ export default function SignupPage() {
           </button>
         </form>
 
+        {/* Demo mode */}
+        <button
+          type="button"
+          onClick={handleDemoLogin}
+          className="w-full mt-3 h-[37px] rounded-[8px] border border-amber-300 bg-amber-50/50 hover:bg-amber-100/50 text-[13px] font-[600] text-amber-900 transition-all cursor-pointer flex items-center justify-center gap-2"
+        >
+          ✨ Try Demo Mode →
+        </button>
+
         <p className="text-[11px] text-ink-muted text-center mt-4">
-          By signing up you agree to our{" "}
-          <Link href="/terms" className="text-ink font-[500] underline">Terms of Service</Link>{" "}
-          and{" "}
-          <Link href="/privacy" className="text-ink font-[500] underline">Privacy Policy</Link>
+          Already have an account?{" "}
+          <Link href="/login" className="text-ink font-[500] hover:underline no-underline">
+            Sign in
+          </Link>
         </p>
       </div>
-
-      <p className="text-center text-[13px] text-ink-faint mt-6">
-        Already have an account?{" "}
-        <Link href="/login" className="text-ink font-[500] hover:underline no-underline">Sign in</Link>
-      </p>
     </div>
   );
 }

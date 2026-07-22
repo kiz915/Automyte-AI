@@ -308,6 +308,17 @@ if (process.env.NODE_ENV !== "production") {
 // Helper methods to interact with store data safely
 
 export function getUser() {
+  if (typeof window !== "undefined") {
+    try {
+      const savedUser = localStorage.getItem("automyte_user");
+      if (savedUser) {
+        const parsed = JSON.parse(savedUser);
+        store.user = parsed;
+      }
+    } catch (e) {
+      console.error("Error reading automyte_user from localStorage:", e);
+    }
+  }
   return store.user;
 }
 
@@ -317,6 +328,18 @@ export function setUserLogin(isLoggedIn: boolean, email?: string, name?: string)
     email: email || (isLoggedIn ? "founder@automyte.ai" : null),
     name: name || (isLoggedIn ? "Founder" : null),
   };
+
+  if (typeof window !== "undefined") {
+    try {
+      if (isLoggedIn) {
+        localStorage.setItem("automyte_user", JSON.stringify(store.user));
+      } else {
+        localStorage.removeItem("automyte_user");
+      }
+    } catch (e) {
+      console.error("Error saving automyte_user to localStorage:", e);
+    }
+  }
   return store.user;
 }
 

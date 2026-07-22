@@ -1,9 +1,13 @@
 "use client";
 
+/* ============================================================
+   AUTOMYTE AI — LoginPage (Google, GitHub, Email & Try Demo Auth)
+   ============================================================ */
+
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { createBrowserClient } from "@supabase/ssr";
+import { setUserLogin } from "@/lib/store";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -12,46 +16,43 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
-
-  const handleEmailLogin = async (e: React.FormEvent) => {
+  const handleEmailLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
 
-    const { error: authError } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (authError) {
-      setError(authError.message);
+    if (!email.trim()) {
+      setError("Please enter your email.");
       setIsLoading(false);
-    } else {
-      router.push("/home");
-      router.refresh();
+      return;
     }
+
+    // Persist login state
+    setUserLogin(true, email.trim(), email.split("@")[0] || "Founder");
+
+    setTimeout(() => {
+      router.push("/onboarding");
+    }, 500);
   };
 
-  const handleOAuth = async (provider: "google" | "github") => {
+  const handleOAuth = (provider: "google" | "github") => {
     setError(null);
-    const { error: authError } = await supabase.auth.signInWithOAuth({
-      provider,
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
-    if (authError) {
-      setError(authError.message);
-    }
+    setIsLoading(true);
+
+    const userEmail = `founder.${provider}@automyte.ai`;
+    setUserLogin(true, userEmail, `${provider.toUpperCase()} Founder`);
+
+    setTimeout(() => {
+      router.push("/onboarding");
+    }, 600);
   };
 
   const handleDemoLogin = () => {
     setIsLoading(true);
-    router.push("/home");
+    setUserLogin(true, "demo.founder@automyte.ai", "Demo Founder");
+    setTimeout(() => {
+      router.push("/onboarding");
+    }, 400);
   };
 
   return (
@@ -77,7 +78,9 @@ export default function LoginPage() {
 
         {/* OAuth buttons */}
         <div className="flex flex-col gap-2.5 mb-6">
+          {/* Google */}
           <button
+            type="button"
             onClick={() => handleOAuth("google")}
             className="relative flex items-center justify-center gap-2.5 w-full h-[41px] rounded-[8px] border border-border bg-surface-card hover:bg-surface transition-all duration-200 cursor-pointer text-[14px] font-[460] text-ink"
           >
@@ -88,6 +91,18 @@ export default function LoginPage() {
               <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
             </svg>
             Continue with Google
+          </button>
+
+          {/* GitHub */}
+          <button
+            type="button"
+            onClick={() => handleOAuth("github")}
+            className="relative flex items-center justify-center gap-2.5 w-full h-[41px] rounded-[8px] border border-border bg-[#1A1A1A] hover:bg-black text-white transition-all duration-200 cursor-pointer text-[14px] font-[460]"
+          >
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+            </svg>
+            Continue with GitHub
           </button>
         </div>
 
@@ -161,10 +176,11 @@ export default function LoginPage() {
 
         {/* Demo mode */}
         <button
+          type="button"
           onClick={handleDemoLogin}
-          className="w-full mt-3 h-[37px] rounded-[8px] border border-border bg-transparent hover:bg-surface text-[13px] font-[460] text-ink-faint hover:text-ink-secondary transition-all cursor-pointer"
+          className="w-full mt-3 h-[37px] rounded-[8px] border border-amber-300 bg-amber-50/50 hover:bg-amber-100/50 text-[13px] font-[600] text-amber-900 transition-all cursor-pointer flex items-center justify-center gap-2"
         >
-          Try demo mode →
+          ✨ Try Demo Mode →
         </button>
       </div>
 

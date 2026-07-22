@@ -1,18 +1,83 @@
 -- ============================================================
--- Automyte AI — Production Supabase Schema DDL
+-- Automyte AI — Production Supabase Schema DDL (Full Parity)
 -- Run this in your Supabase SQL Editor to initialize tables
 -- ============================================================
 
 -- Enable UUID extension
 create extension if not exists "uuid-ossp";
 
--- ---- WORKSPACES ----
+-- ---- USERS & PROFILES ----
+create table if not exists public.users (
+    id uuid primary key default gen_random_uuid(),
+    email text unique not null,
+    full_name text,
+    avatar_url text,
+    provider text default 'email',
+    created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+    updated_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+-- ---- WORKSPACES & COMPANIES ----
 create table if not exists public.workspaces (
     id uuid primary key default gen_random_uuid(),
     name text not null,
     slug text not null unique,
+    industry text default 'Developer Tools / AI',
+    stage text default 'Idea',
+    team_size text default 'Solo Founder',
     created_at timestamp with time zone default timezone('utc'::text, now()) not null,
     updated_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+create table if not exists public.companies (
+    id uuid primary key default gen_random_uuid(),
+    workspace_id uuid references public.workspaces(id) on delete cascade,
+    user_id uuid references public.users(id) on delete cascade,
+    name text not null,
+    idea text not null,
+    industry text not null default 'Developer Tools / AI',
+    stage text not null default 'Idea',
+    team_size text not null default 'Solo Founder',
+    created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+    updated_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+-- ---- AI FOUNDER INTERVIEW & MEMORY STORE ----
+create table if not exists public.company_interviews (
+    id uuid primary key default gen_random_uuid(),
+    company_id uuid references public.companies(id) on delete cascade,
+    target_customer text,
+    problem text,
+    solution text,
+    revenue_model text,
+    competitors text,
+    milestones text,
+    follow_up_answers jsonb default '{}'::jsonb,
+    created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+    updated_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+create table if not exists public.ai_analysis_results (
+    id uuid primary key default gen_random_uuid(),
+    company_id uuid references public.companies(id) on delete cascade,
+    is_idea_clear boolean default true,
+    market_saturation text default 'medium',
+    competitors jsonb default '[]'::jsonb,
+    differentiation text,
+    swot jsonb default '{"strengths": [], "weaknesses": [], "opportunities": [], "threats": []}'::jsonb,
+    confidence_score integer default 94,
+    recommendation text,
+    created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+create table if not exists public.company_memories (
+    id uuid primary key default gen_random_uuid(),
+    company_id uuid references public.companies(id) on delete cascade,
+    type text not null default 'context', -- 'fact' | 'decision' | 'context' | 'document' | 'transcript'
+    title text not null,
+    summary text not null,
+    tags jsonb default '[]'::jsonb,
+    created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
 -- ---- STARTUP PROFILE & BRAND KIT ----
@@ -108,28 +173,27 @@ create table if not exists public.integrations (
 );
 
 -- Enable Row Level Security (RLS) on tables
+alter table public.users enable row level security;
 alter table public.workspaces enable row level security;
+alter table public.companies enable row level security;
+alter table public.company_interviews enable row level security;
+alter table public.ai_analysis_results enable row level security;
+alter table public.company_memories enable row level security;
 alter table public.startup_profiles enable row level security;
 alter table public.tasks enable row level security;
 alter table public.documents enable row level security;
 alter table public.approvals enable row level security;
 alter table public.integrations enable row level security;
 
--- Basic policy: authenticated users can access workspace data
-create policy "Users can access their workspaces" on public.workspaces
-    for all using (true);
-
-create policy "Users can access startup profiles" on public.startup_profiles
-    for all using (true);
-
-create policy "Users can access tasks" on public.tasks
-    for all using (true);
-
-create policy "Users can access documents" on public.documents
-    for all using (true);
-
-create policy "Users can access approvals" on public.approvals
-    for all using (true);
-
-create policy "Users can access integrations" on public.integrations
-    for all using (true);
+-- Row Level Security Policies
+create policy "Users can access their user profile" on public.users for all using (true);
+create policy "Users can access their workspaces" on public.workspaces for all using (true);
+create policy "Users can access companies" on public.companies for all using (true);
+create policy "Users can access interviews" on public.company_interviews for all using (true);
+create policy "Users can access analysis results" on public.ai_analysis_results for all using (true);
+create policy "Users can access company memories" on public.company_memories for all using (true);
+create policy "Users can access startup profiles" on public.startup_profiles for all using (true);
+create policy "Users can access tasks" on public.tasks for all using (true);
+create policy "Users can access documents" on public.documents for all using (true);
+create policy "Users can access approvals" on public.approvals for all using (true);
+create policy "Users can access integrations" on public.integrations for all using (true);
