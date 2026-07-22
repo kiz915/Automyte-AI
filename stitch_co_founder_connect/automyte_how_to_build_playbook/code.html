@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>How to Build with Automyte AI | Founder Playbook</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Hanken+Grotesk:wght@600;700;800&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error-container": "#93000a",
+                        "inverse-on-surface": "#f1f1ee",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary": "#000000",
+                        "on-primary-fixed-variant": "#474746",
+                        "surface-container-high": "#e8e8e5",
+                        "border-subtle": "#E5E5E5",
+                        "on-secondary-container": "#003064",
+                        "on-secondary-fixed-variant": "#00468c",
+                        "outline": "#747878",
+                        "inverse-primary": "#c8c6c5",
+                        "inverse-surface": "#2f312f",
+                        "surface-tint": "#5f5e5e",
+                        "on-primary": "#ffffff",
+                        "surface-container-highest": "#e2e3e0",
+                        "primary-fixed-dim": "#c8c6c5",
+                        "on-error": "#ffffff",
+                        "surface-container": "#eeeeeb",
+                        "surface-bright": "#f9f9f6",
+                        "secondary-fixed-dim": "#a9c7ff",
+                        "error-alert": "#EF4444",
+                        "on-primary-container": "#858383",
+                        "error-container": "#ffdad6",
+                        "tertiary-fixed-dim": "#cac6c4",
+                        "on-secondary-fixed": "#001b3d",
+                        "on-tertiary-fixed": "#1c1b1a",
+                        "on-secondary": "#ffffff",
+                        "surface-dim": "#dadad7",
+                        "error": "#ba1a1a",
+                        "on-tertiary": "#ffffff",
+                        "outline-variant": "#c4c7c7",
+                        "on-tertiary-container": "#868382",
+                        "surface-variant": "#e2e3e0",
+                        "on-background": "#1a1c1b",
+                        "success-leaf": "#22C55E",
+                        "secondary": "#005db7",
+                        "background": "#f9f9f6",
+                        "tertiary-fixed": "#e6e2df",
+                        "surface-muted": "#F5F5F2",
+                        "surface": "#f9f9f6",
+                        "secondary-fixed": "#d6e3ff",
+                        "on-surface-variant": "#444748",
+                        "primary": "#000000",
+                        "secondary-container": "#5499fd",
+                        "on-tertiary-fixed-variant": "#484645",
+                        "primary-fixed": "#e5e2e1",
+                        "on-primary-fixed": "#1c1b1b",
+                        "tertiary-container": "#1c1b1a",
+                        "primary-container": "#1c1b1b",
+                        "surface-container-low": "#f4f4f1",
+                        "on-surface": "#1a1c1b"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "base": "8px",
+                        "container-max": "1280px",
+                        "section-v-mobile": "64px",
+                        "section-v-desktop": "120px",
+                        "margin-mobile": "20px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "label-xs": ["JetBrains Mono"],
+                        "display-hero": ["Hanken Grotesk"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "body-lg": ["Inter"],
+                        "label-sm": ["JetBrains Mono"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "headline-lg-mobile": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-xs": ["11px", {"lineHeight": "14px", "fontWeight": "500"}],
+                        "display-hero": ["72px", {"lineHeight": "80px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "label-sm": ["13px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                        "headline-md": ["28px", {"lineHeight": "36px", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["32px", {"lineHeight": "40px", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .blueprint-grid {
+            background-image: linear-gradient(to right, #E5E5E5 1px, transparent 1px),
+                              linear-gradient(to bottom, #E5E5E5 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        .step-card:hover .step-number {
+            color: #000000;
+            transform: scale(1.1);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #F5F5F2;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #000000;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md antialiased selection:bg-secondary-fixed selection:text-on-secondary-fixed">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 flex justify-between items-center px-margin-mobile md:px-gutter max-w-container-max mx-auto bg-surface border-b border-subtle h-16">
+<div class="flex items-center gap-8">
+<span class="font-headline-md text-headline-md font-bold text-primary">Automyte</span>
+<div class="hidden md:flex items-center gap-6">
+<a class="text-on-surface-variant font-label-sm hover:text-primary transition-colors" href="#">Solutions</a>
+<a class="text-primary border-b-2 border-primary pb-1 font-label-sm" href="#">Playbooks</a>
+<a class="text-on-surface-variant font-label-sm hover:text-primary transition-colors" href="#">Agents</a>
+<a class="text-on-surface-variant font-label-sm hover:text-primary transition-colors" href="#">Infrastructure</a>
+</div>
+</div>
+<button class="bg-primary text-on-primary px-5 py-2 font-label-sm uppercase tracking-wider hover:opacity-80 transition-all rounded-lg">Launch Studio</button>
+</nav>
+<main class="pt-24 pb-section-v-desktop max-w-container-max mx-auto px-margin-mobile md:px-gutter">
+<!-- Hero Section -->
+<header class="relative mb-20">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-12 items-end">
+<div class="md:col-span-8">
+<div class="flex items-center gap-3 mb-6">
+<span class="bg-surface-container text-primary px-3 py-1 font-label-xs rounded-full border border-subtle uppercase">Founder Playbook</span>
+<span class="text-on-surface-variant font-label-sm">10 min read</span>
+</div>
+<h1 class="font-display-hero text-headline-lg-mobile md:text-display-hero mb-6">How to build with Automyte AI</h1>
+<p class="font-body-lg text-on-surface-variant max-w-2xl">
+                        From spec to deployment: scaffolding the codebase, wiring CI, and running real infrastructure with autonomous developer agents.
+                    </p>
+</div>
+<div class="md:col-span-4 flex flex-col items-start md:items-end gap-2 pb-2">
+<div class="h-1 w-24 bg-primary mb-4"></div>
+<span class="font-label-xs text-on-surface-variant uppercase">Current Status</span>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-success-leaf animate-pulse"></span>
+<span class="font-label-sm font-bold">LIVE ENVIRONMENT READY</span>
+</div>
+</div>
+</div>
+<!-- Metrics Bento -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-0 border border-subtle mt-16 overflow-hidden">
+<div class="p-8 md:p-12 bg-white border-r border-subtle flex flex-col gap-1">
+<span class="font-display-hero text-headline-lg text-primary">10x Speedup</span>
+<span class="font-label-sm text-on-surface-variant uppercase tracking-widest">Deployment Velocity</span>
+</div>
+<div class="p-8 md:p-12 bg-white border-r border-subtle flex flex-col gap-1">
+<span class="font-display-hero text-headline-lg text-primary">92% Tests</span>
+<span class="font-label-sm text-on-surface-variant uppercase tracking-widest">Code Coverage</span>
+</div>
+<div class="p-8 md:p-12 bg-white flex flex-col gap-1">
+<span class="font-display-hero text-headline-lg text-primary">&lt; 15 Mins</span>
+<span class="font-label-sm text-on-surface-variant uppercase tracking-widest">Time to First Commit</span>
+</div>
+</div>
+</header>
+<!-- Chapter Navigation -->
+<section class="mb-section-v-desktop">
+<div class="flex items-center justify-between mb-8">
+<h2 class="font-headline-md text-headline-md">Playbook Chapters</h2>
+<span class="font-label-sm text-on-surface-variant">10 Steps to Production</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-5 gap-0 border border-subtle">
+<!-- Loop placeholder logic -->
+<div class="step-card group p-6 bg-white border-b md:border-b-0 md:border-r border-subtle hover:bg-surface-muted transition-all cursor-pointer">
+<span class="step-number block font-label-xs text-on-surface-variant mb-4 transition-all">01</span>
+<h4 class="font-headline-md text-body-md font-bold mb-2">Introduction</h4>
+<p class="font-label-xs text-on-surface-variant leading-relaxed">Agentic Engineering &amp; Human-Agent loops.</p>
+</div>
+<div class="step-card group p-6 bg-white border-b md:border-b-0 md:border-r border-subtle hover:bg-surface-muted transition-all cursor-pointer">
+<span class="step-number block font-label-xs text-on-surface-variant mb-4 transition-all">02</span>
+<h4 class="font-headline-md text-body-md font-bold mb-2">The Spec</h4>
+<p class="font-label-xs text-on-surface-variant leading-relaxed">Brain dumps into structured PRDs.</p>
+</div>
+<div class="step-card group p-6 bg-white border-b md:border-b-0 md:border-r border-subtle hover:bg-surface-muted transition-all cursor-pointer">
+<span class="step-number block font-label-xs text-on-surface-variant mb-4 transition-all">03</span>
+<h4 class="font-headline-md text-body-md font-bold mb-2">Git Strategy</h4>
+<p class="font-label-xs text-on-surface-variant leading-relaxed">Repo init &amp; branch protection.</p>
+</div>
+<div class="step-card group p-6 bg-white border-b md:border-b-0 md:border-r border-subtle hover:bg-surface-muted transition-all cursor-pointer">
+<span class="step-number block font-label-xs text-on-surface-variant mb-4 transition-all">04</span>
+<h4 class="font-headline-md text-body-md font-bold mb-2">Infra Setup</h4>
+<p class="font-label-xs text-on-surface-variant leading-relaxed">Vercel, Supabase &amp; Pipelines.</p>
+</div>
+<div class="step-card group p-6 bg-white border-b md:border-b-0 border-subtle hover:bg-surface-muted transition-all cursor-pointer">
+<span class="step-number block font-label-xs text-on-surface-variant mb-4 transition-all">05</span>
+<h4 class="font-headline-md text-body-md font-bold mb-2">Secrets</h4>
+<p class="font-label-xs text-on-surface-variant leading-relaxed">Isolating keys &amp; env safety.</p>
+</div>
+<div class="step-card group p-6 bg-white border-b md:border-b-0 md:border-r border-subtle hover:bg-surface-muted transition-all cursor-pointer">
+<span class="step-number block font-label-xs text-on-surface-variant mb-4 transition-all">06</span>
+<h4 class="font-headline-md text-body-md font-bold mb-2">Architecture</h4>
+<p class="font-label-xs text-on-surface-variant leading-relaxed">Design systems &amp; brand kits.</p>
+</div>
+<div class="step-card group p-6 bg-white border-b md:border-b-0 md:border-r border-subtle hover:bg-surface-muted transition-all cursor-pointer">
+<span class="step-number block font-label-xs text-on-surface-variant mb-4 transition-all">07</span>
+<h4 class="font-headline-md text-body-md font-bold mb-2">Backend</h4>
+<p class="font-label-xs text-on-surface-variant leading-relaxed">Schemas, RLS &amp; serverless APIs.</p>
+</div>
+<div class="step-card group p-6 bg-white border-b md:border-b-0 md:border-r border-subtle hover:bg-surface-muted transition-all cursor-pointer">
+<span class="step-number block font-label-xs text-on-surface-variant mb-4 transition-all">08</span>
+<h4 class="font-headline-md text-body-md font-bold mb-2">Frontend</h4>
+<p class="font-label-xs text-on-surface-variant leading-relaxed">UI, state &amp; real-time subs.</p>
+</div>
+<div class="step-card group p-6 bg-white border-b md:border-b-0 md:border-r border-subtle hover:bg-surface-muted transition-all cursor-pointer">
+<span class="step-number block font-label-xs text-on-surface-variant mb-4 transition-all">09</span>
+<h4 class="font-headline-md text-body-md font-bold mb-2">Launch</h4>
+<p class="font-label-xs text-on-surface-variant leading-relaxed">Domains, SSL &amp; launch checks.</p>
+</div>
+<div class="step-card group p-6 bg-white border-b md:border-b-0 border-subtle hover:bg-surface-muted transition-all cursor-pointer">
+<span class="step-number block font-label-xs text-on-surface-variant mb-4 transition-all">10</span>
+<h4 class="font-headline-md text-body-md font-bold mb-2">Testing</h4>
+<p class="font-label-xs text-on-surface-variant leading-relaxed">Automation, CI &amp; Linting.</p>
+</div>
+</div>
+</section>
+<!-- Step 01 Deep Dive -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-16 relative">
+<div class="lg:col-span-8">
+<div class="flex items-center gap-4 mb-8">
+<span class="font-display-hero text-headline-lg-mobile md:text-headline-lg opacity-20">01</span>
+<div class="h-[1px] flex-grow bg-subtle"></div>
+<span class="font-label-sm text-on-surface-variant uppercase tracking-widest">Chapter One</span>
+</div>
+<div class="space-y-8">
+<div class="flex items-center gap-3">
+<span class="bg-secondary-fixed text-on-secondary-fixed px-3 py-1 font-label-xs rounded-full">STEP 01</span>
+<span class="text-on-surface-variant font-label-sm">CTO &amp; Engineering Executive Perspective</span>
+</div>
+<h2 class="font-display-hero text-headline-lg-mobile md:text-headline-lg">Introduction to Agentic Engineering</h2>
+<div class="prose prose-lg max-w-none text-on-surface-variant font-body-lg leading-relaxed space-y-6">
+<p>
+                            Agentic engineering replaces repetitive boilerplate coding with architectural oversight. Instead of typing every line of React or SQL, you describe features to your CTO and Engineering agents.
+                        </p>
+<p>
+                            They break specifications into tasks, draft database migration scripts, write component logic, and run automated test suites before deploying. This creates a high-fidelity loop where the human acts as the orchestrator and the AI as the highly skilled execution layer.
+                        </p>
+</div>
+<!-- Prompt Execution Component -->
+<div class="mt-12 p-1 border border-subtle bg-surface-muted">
+<div class="bg-white p-6 md:p-8">
+<div class="flex items-center justify-between mb-6">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">terminal</span>
+<span class="font-label-sm font-bold uppercase tracking-tight">Suggested Agent Execution Prompt</span>
+</div>
+<button class="flex items-center gap-2 font-label-xs text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[14px]">content_copy</span>
+                                    COPY PROMPT
+                                </button>
+</div>
+<div class="bg-surface-container p-5 font-label-sm text-on-surface border-l-4 border-primary">
+                                "Scaffold a Next.js 16 app with TypeScript, Tailwind CSS, and Supabase authentication."
+                            </div>
+</div>
+</div>
+<!-- Checklist -->
+<div class="mt-12">
+<h4 class="font-headline-md text-body-md font-bold uppercase tracking-widest mb-6">Execution Checklist</h4>
+<ul class="space-y-4">
+<li class="flex items-start gap-4">
+<div class="w-6 h-6 border-2 border-primary flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[16px] text-primary">check</span>
+</div>
+<span class="text-on-surface-variant">Choose tech stack (Next.js, TypeScript, Tailwind, Supabase)</span>
+</li>
+<li class="flex items-start gap-4">
+<div class="w-6 h-6 border-2 border-primary flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[16px] text-primary">check</span>
+</div>
+<span class="text-on-surface-variant">Establish codebase conventions and directory structure</span>
+</li>
+<li class="flex items-start gap-4">
+<div class="w-6 h-6 border-2 border-primary flex items-center justify-center shrink-0 mt-0.5"></div>
+<span class="text-on-surface-variant">Configure environment variable templates</span>
+</li>
+</ul>
+</div>
+<!-- Actions -->
+<div class="flex flex-col md:flex-row items-center gap-4 mt-12">
+<a class="w-full md:w-auto bg-primary text-on-primary px-8 py-4 font-label-sm uppercase tracking-widest text-center hover:opacity-90 transition-all rounded-lg" href="/onboarding">Execute this step in Automyte AI</a>
+<a class="w-full md:w-auto border border-primary text-primary px-8 py-4 font-label-sm uppercase tracking-widest text-center hover:bg-surface-muted transition-all rounded-lg" href="/canvas">Open Canvas Workspace →</a>
+</div>
+</div>
+</div>
+<!-- Sidebar Assets -->
+<div class="lg:col-span-4 space-y-12">
+<!-- Blueprint Illustration -->
+<div class="aspect-square bg-white border border-subtle p-8 relative overflow-hidden blueprint-grid">
+<div class="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent"></div>
+<div class="relative z-10 h-full flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<div class="space-y-1">
+<div class="w-12 h-1 bg-primary"></div>
+<div class="font-label-xs text-[9px] text-on-surface-variant">MOD_ARCH_V2.SVG</div>
+</div>
+<span class="material-symbols-outlined text-outline">settings_input_component</span>
+</div>
+<div class="border-l-2 border-primary pl-4 py-2">
+<span class="font-label-xs text-on-surface-variant">STATUS: ANALYZING_INFRA</span>
+</div>
+</div>
+</div>
+<!-- Testimonial -->
+<div class="p-8 border border-subtle bg-white">
+<span class="material-symbols-outlined text-primary mb-6" style="font-variation-settings: 'FILL' 1;">format_quote</span>
+<blockquote class="font-body-md italic text-on-surface-variant mb-6 leading-relaxed">
+                        "We shipped our entire MVP in 2 weeks instead of 3 months. The engineering agents set up our Supabase schemas and Vercel pipelines automatically."
+                    </blockquote>
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">person</span>
+</div>
+<div>
+<p class="font-label-sm font-bold">Jordan Rivera</p>
+<p class="font-label-xs text-on-surface-variant">CTO, Automyte AI</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Next Playbook CTA -->
+<section class="mt-section-v-desktop border-t border-subtle pt-16">
+<div class="bg-surface-muted p-12 flex flex-col md:flex-row justify-between items-center gap-8">
+<div>
+<span class="font-label-xs text-on-surface-variant uppercase tracking-widest mb-2 block">Next Playbook</span>
+<h3 class="font-headline-lg text-headline-md md:text-headline-lg">Sell to customers</h3>
+</div>
+<a class="bg-primary text-on-primary px-10 py-5 font-label-sm uppercase tracking-widest hover:scale-105 transition-transform rounded-lg flex items-center gap-3" href="/how-to/sell">
+                    Continue <span class="material-symbols-outlined">arrow_forward</span>
+</a>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full py-section-v-mobile md:py-base px-margin-mobile flex flex-col md:flex-row justify-between items-center max-w-container-max mx-auto border-t border-subtle bg-surface-muted">
+<div class="flex flex-col items-center md:items-start gap-4 mb-8 md:mb-0">
+<span class="font-headline-md text-headline-md text-primary font-bold">Automyte</span>
+<p class="font-label-sm text-on-surface-variant text-center md:text-left">© 2024 Automyte. Created by Kishore V - Automyte CEO</p>
+</div>
+<div class="flex flex-wrap justify-center gap-6 md:gap-12">
+<a class="font-label-sm text-on-surface-variant hover:underline transition-all" href="#">Documentation</a>
+<a class="font-label-sm text-on-surface-variant hover:underline transition-all" href="#">Privacy Policy</a>
+<a class="font-label-sm text-on-surface-variant hover:underline transition-all" href="#">Terms of Service</a>
+<a class="font-label-sm text-on-surface-variant hover:underline transition-all" href="#">Contact Support</a>
+</div>
+</footer>
+<script>
+        // Simple micro-interaction for smooth scrolling to sections
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Sticky header opacity change on scroll
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 20) {
+                nav.classList.add('bg-white/90', 'backdrop-blur-sm');
+                nav.classList.remove('bg-surface');
+            } else {
+                nav.classList.add('bg-surface');
+                nav.classList.remove('bg-white/90', 'backdrop-blur-sm');
+            }
+        });
+    </script>
+</body></html>

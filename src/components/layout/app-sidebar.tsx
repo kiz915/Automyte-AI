@@ -24,6 +24,7 @@ import {
 
 const coreLinks = [
   { label: "Home Canvas", href: "/home", icon: <Home className="w-4 h-4" /> },
+  { label: "Stitch Co-Founder", href: "/cofounder-connect", icon: <Sparkles className="w-4 h-4 text-amber-500" /> },
   { label: "Tasks Board", href: "/projects", icon: <CheckSquare className="w-4 h-4" /> },
   { label: "Documents", href: "/documents", icon: <FileText className="w-4 h-4" /> },
 ];

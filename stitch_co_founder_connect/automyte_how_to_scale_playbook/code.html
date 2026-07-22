@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>How to Scale with Automyte AI | Founder Playbook</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Hanken+Grotesk:wght@600;700;800&family=JetBrains+Mono:wght@500&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@100..900&family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error-container": "#93000a",
+                        "inverse-on-surface": "#f1f1ee",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary": "#000000",
+                        "on-primary-fixed-variant": "#474746",
+                        "surface-container-high": "#e8e8e5",
+                        "border-subtle": "#E5E5E5",
+                        "on-secondary-container": "#003064",
+                        "on-secondary-fixed-variant": "#00468c",
+                        "outline": "#747878",
+                        "inverse-primary": "#c8c6c5",
+                        "inverse-surface": "#2f312f",
+                        "surface-tint": "#5f5e5e",
+                        "on-primary": "#ffffff",
+                        "surface-container-highest": "#e2e3e0",
+                        "primary-fixed-dim": "#c8c6c5",
+                        "on-error": "#ffffff",
+                        "surface-container": "#eeeeeb",
+                        "surface-bright": "#f9f9f6",
+                        "secondary-fixed-dim": "#a9c7ff",
+                        "error-alert": "#EF4444",
+                        "on-primary-container": "#858383",
+                        "error-container": "#ffdad6",
+                        "tertiary-fixed-dim": "#cac6c4",
+                        "on-secondary-fixed": "#001b3d",
+                        "on-tertiary-fixed": "#1c1b1a",
+                        "on-secondary": "#ffffff",
+                        "surface-dim": "#dadad7",
+                        "error": "#ba1a1a",
+                        "on-tertiary": "#ffffff",
+                        "outline-variant": "#c4c7c7",
+                        "on-tertiary-container": "#868382",
+                        "surface-variant": "#e2e3e0",
+                        "on-background": "#1a1c1b",
+                        "success-leaf": "#22C55E",
+                        "secondary": "#005db7",
+                        "background": "#f9f9f6",
+                        "tertiary-fixed": "#e6e2df",
+                        "surface-muted": "#F5F5F2",
+                        "surface": "#f9f9f6",
+                        "secondary-fixed": "#d6e3ff",
+                        "on-surface-variant": "#444748",
+                        "primary": "#000000",
+                        "secondary-container": "#5499fd",
+                        "on-tertiary-fixed-variant": "#484645",
+                        "primary-fixed": "#e5e2e1",
+                        "on-primary-fixed": "#1c1b1b",
+                        "tertiary-container": "#1c1b1a",
+                        "primary-container": "#1c1b1b",
+                        "surface-container-low": "#f4f4f1",
+                        "on-surface": "#1a1c1b"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "base": "8px",
+                        "container-max": "1280px",
+                        "section-v-mobile": "64px",
+                        "section-v-desktop": "120px",
+                        "margin-mobile": "20px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "label-xs": ["JetBrains Mono"],
+                        "display-hero": ["Hanken Grotesk"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "body-lg": ["Inter"],
+                        "label-sm": ["JetBrains Mono"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "headline-lg-mobile": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-xs": ["11px", {"lineHeight": "14px", "fontWeight": "500"}],
+                        "display-hero": ["72px", {"lineHeight": "80px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "label-sm": ["13px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                        "headline-md": ["28px", {"lineHeight": "36px", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["32px", {"lineHeight": "40px", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .blueprint-grid {
+            background-image: radial-gradient(circle, #E5E5E5 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md selection:bg-secondary-fixed selection:text-on-secondary-fixed">
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 w-full z-50 bg-surface border-b border-subtle">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-gutter h-16 flex justify-between items-center">
+<a class="font-headline-md text-headline-md font-bold text-primary tracking-tighter" href="/">Automyte</a>
+<nav class="hidden md:flex gap-8 items-center">
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Solutions</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Playbooks</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Agents</a>
+<a class="font-body-md text-body-md text-primary border-b-2 border-primary pb-1" href="#">Infrastructure</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="hidden md:flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors px-3 py-1">
+<span class="material-symbols-outlined text-[20px]">search</span>
+</button>
+<button class="bg-primary text-on-primary px-6 py-2 font-body-md rounded-DEFAULT hover:opacity-80 transition-all">Launch Studio</button>
+</div>
+</div>
+</header>
+<main class="pt-24">
+<!-- Hero Section -->
+<section class="blueprint-grid border-b border-subtle">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-gutter py-section-v-mobile md:py-section-v-desktop">
+<div class="flex flex-col md:flex-row gap-12 items-start">
+<div class="flex-1">
+<div class="flex items-center gap-3 mb-6">
+<span class="font-label-sm text-label-sm bg-surface-container-high px-2 py-1 rounded">11 min read</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Founder Playbook</span>
+</div>
+<h1 class="font-display-hero text-headline-lg-mobile md:text-display-hero mb-8">How to scale with Automyte AI</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mb-12">
+                            Analytics, support, unit economics — the loops that turn a working product into a business machine.
+                        </p>
+<!-- High Fidelity Metrics -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-12 py-8 border-t border-subtle">
+<div class="group">
+<div class="font-label-xs text-label-xs text-secondary mb-1 flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+                                    RETENTION
+                                </div>
+<div class="font-headline-lg text-headline-lg text-primary">135% NRR</div>
+<div class="font-body-md text-body-md text-on-surface-variant">Net Revenue Retention</div>
+</div>
+<div class="group">
+<div class="font-label-xs text-label-xs text-success-leaf mb-1 flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-success-leaf"></span>
+                                    EFFICIENCY
+                                    <span class="material-symbols-outlined text-[14px]">auto_awesome</span>
+</div>
+<div class="font-headline-lg text-headline-lg text-primary">88% Automated</div>
+<div class="font-body-md text-body-md text-on-surface-variant">Support Resolution Rate</div>
+</div>
+<div class="group">
+<div class="font-label-xs text-label-xs text-secondary mb-1 flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+                                    PRECISION
+                                </div>
+<div class="font-headline-lg text-headline-lg text-primary">99.4%</div>
+<div class="font-body-md text-body-md text-on-surface-variant">Runway Accuracy</div>
+</div>
+</div>
+</div>
+<!-- Decorative Blueprint Visual -->
+<div class="hidden lg:block w-[400px] aspect-square relative bg-white border border-subtle p-8 shadow-sm">
+<div class="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none blueprint-grid"></div>
+<div class="relative z-10 h-full flex flex-col justify-between">
+<div class="border-l-2 border-primary pl-4 py-2">
+<div class="font-label-xs text-label-xs mb-2">OPERATING SYSTEM</div>
+<div class="font-headline-md text-headline-md">v.2.4.0_SCALE</div>
+</div>
+<div class="space-y-4">
+<div class="h-1 bg-primary w-full"></div>
+<div class="h-1 bg-surface-container-high w-3/4"></div>
+<div class="h-1 bg-surface-container-high w-1/2"></div>
+</div>
+<div class="flex justify-between items-end">
+<span class="material-symbols-outlined text-4xl text-primary">hub</span>
+<span class="font-label-xs text-label-xs">SCALING_LOOP_INITIATED</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Chapter Bento Grid -->
+<section class="max-w-container-max mx-auto px-margin-mobile md:px-gutter py-section-v-mobile md:py-section-v-desktop">
+<h2 class="font-headline-md text-headline-md mb-12 flex items-center gap-4">
+                Playbook Chapters 
+                <span class="font-label-sm text-label-sm text-on-surface-variant font-normal">(6 Steps)</span>
+</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Step 01 - Active -->
+<div class="bg-surface border-2 border-primary p-8 flex flex-col gap-6 relative group">
+<span class="font-headline-lg text-headline-lg text-primary opacity-20 absolute top-4 right-8">01</span>
+<div class="font-label-xs text-label-xs text-primary bg-primary-fixed px-2 py-1 inline-block w-fit">ACTIVE MODULE</div>
+<div>
+<h3 class="font-headline-md text-headline-md mb-3">Introduction to Agentic Scaling</h3>
+<p class="text-on-surface-variant">Learn how to build autonomous operating loops for compounding growth.</p>
+</div>
+<button class="mt-auto text-primary font-bold flex items-center gap-2 group-hover:gap-3 transition-all">
+                        Resume Step <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+<!-- Step 02 -->
+<div class="bg-surface-muted border border-subtle p-8 flex flex-col gap-6 group hover:bg-white transition-all">
+<span class="font-headline-lg text-headline-lg text-on-surface opacity-10 absolute top-4 right-8">02</span>
+<div class="font-label-xs text-label-xs text-on-surface-variant">UNIT 02</div>
+<div>
+<h3 class="font-headline-md text-headline-md mb-3">Start With the Scaling Loop</h3>
+<p class="text-on-surface-variant">Create compounding loops: retention, expansion, and customer referrals.</p>
+</div>
+</div>
+<!-- Step 03 -->
+<div class="bg-surface-muted border border-subtle p-8 flex flex-col gap-6 group hover:bg-white transition-all">
+<span class="font-headline-lg text-headline-lg text-on-surface opacity-10 absolute top-4 right-8">03</span>
+<div class="font-label-xs text-label-xs text-on-surface-variant">UNIT 03</div>
+<div>
+<h3 class="font-headline-md text-headline-md mb-3">Add Product Analytics</h3>
+<p class="text-on-surface-variant">Track user behavior, feature adoption, and funnel drop-off points.</p>
+</div>
+</div>
+<!-- Step 04 -->
+<div class="bg-surface-muted border border-subtle p-8 flex flex-col gap-6 group hover:bg-white transition-all">
+<span class="font-headline-lg text-headline-lg text-on-surface opacity-10 absolute top-4 right-8">04</span>
+<div class="font-label-xs text-label-xs text-on-surface-variant">UNIT 04</div>
+<div>
+<h3 class="font-headline-md text-headline-md mb-3">AI Support & Docs</h3>
+<p class="text-on-surface-variant">Deploy automated tier-1 support agents and self-serve documentation.</p>
+</div>
+</div>
+<!-- Step 05 -->
+<div class="bg-surface-muted border border-subtle p-8 flex flex-col gap-6 group hover:bg-white transition-all">
+<span class="font-headline-lg text-headline-lg text-on-surface opacity-10 absolute top-4 right-8">05</span>
+<div class="font-label-xs text-label-xs text-on-surface-variant">UNIT 05</div>
+<div>
+<h3 class="font-headline-md text-headline-md mb-3">Optimize Unit Economics</h3>
+<p class="text-on-surface-variant">Master LTV, CAC payback, gross margins, and net revenue retention.</p>
+</div>
+</div>
+<!-- Step 06 -->
+<div class="bg-surface-muted border border-subtle p-8 flex flex-col gap-6 group hover:bg-white transition-all">
+<span class="font-headline-lg text-headline-lg text-on-surface opacity-10 absolute top-4 right-8">06</span>
+<div class="font-label-xs text-label-xs text-on-surface-variant">UNIT 06</div>
+<div>
+<h3 class="font-headline-md text-headline-md mb-3">Expand the Business</h3>
+<p class="text-on-surface-variant">Launch enterprise tiers, international markets, and new product lines.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Testimonial Section -->
+<section class="bg-primary text-on-primary py-24">
+<div class="max-w-3xl mx-auto px-margin-mobile text-center">
+<span class="material-symbols-outlined text-4xl mb-8 text-secondary-fixed">format_quote</span>
+<p class="font-headline-md text-headline-md mb-8 leading-snug">
+                    "Scaling from 10 to 50 enterprise contracts usually breaks your operations. Automyte's automated finance and support agents kept us completely sane."
+                </p>
+<div class="flex items-center justify-center gap-4">
+<div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center text-primary font-bold">SW</div>
+<div class="text-left">
+<div class="font-body-md font-bold">Sam Williams</div>
+<div class="font-label-xs text-label-xs opacity-60 uppercase">CFO, Automyte AI</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Deep Dive Section (Step 01) -->
+<section class="py-section-v-mobile md:py-section-v-desktop border-b border-subtle" id="step-01">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-gutter">
+<div class="flex flex-col lg:flex-row gap-16">
+<!-- Article Content -->
+<article class="flex-1 max-w-2xl">
+<div class="flex items-center gap-3 mb-8">
+<span class="font-label-sm text-label-sm text-primary font-bold tracking-widest uppercase">Step 01</span>
+<span class="w-8 h-[1px] bg-subtle"></span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">CFO & Operations Executive</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg mb-8">Introduction to Agentic Scaling</h2>
+<div class="space-y-6 text-on-surface-variant text-body-lg font-body-lg">
+<p>
+                                Scaling is about turning a working product engine into a predictable, high-margin business machine. 
+                            </p>
+<p>
+                                Agentic scaling automates financial forecasting, customer support triage, churn prevention, and operational compliance so your core team stays lean.
+                            </p>
+</div>
+<div class="mt-12 p-8 bg-surface-container-low border border-subtle space-y-6">
+<h4 class="font-headline-md text-[20px] flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">fact_check</span>
+                                Execution Checklist
+                            </h4>
+<ul class="space-y-4">
+<li class="flex items-start gap-4">
+<span class="material-symbols-outlined text-success-leaf mt-1">check_circle</span>
+<span>Establish key SaaS health metrics (ARR, NRR, CAC Payback, LTV)</span>
+</li>
+<li class="flex items-start gap-4">
+<span class="material-symbols-outlined text-on-surface-variant mt-1">radio_button_unchecked</span>
+<span>Identify operational bottlenecks limiting monthly velocity</span>
+</li>
+<li class="flex items-start gap-4">
+<span class="material-symbols-outlined text-on-surface-variant mt-1">radio_button_unchecked</span>
+<span>Deploy automated support & financial monitoring workflows</span>
+</li>
+</ul>
+</div>
+<div class="mt-12 flex flex-col sm:flex-row gap-4">
+<a class="bg-primary text-on-primary px-8 py-3 rounded-DEFAULT font-bold text-center hover:opacity-90 transition-all" href="/onboarding">Execute this step in Automyte AI</a>
+<a class="border border-primary px-8 py-3 rounded-DEFAULT font-bold text-center hover:bg-surface-container transition-all" href="/canvas">Open Canvas Workspace →</a>
+</div>
+</article>
+<!-- Prompt Sandbox UI -->
+<aside class="lg:w-96">
+<div class="sticky top-24 space-y-8">
+<div class="bg-white border border-subtle shadow-sm p-6">
+<div class="font-label-xs text-label-xs text-on-surface-variant mb-4 flex justify-between items-center">
+<span>SUGGESTED EXECUTION PROMPT</span>
+<span class="material-symbols-outlined text-[14px]">terminal</span>
+</div>
+<div class="bg-surface-muted p-4 font-label-sm text-label-sm text-primary mb-4 rounded italic">
+                                    "Generate a 12-month financial model forecasting MRR, ARR, and cash runway based on current growth rates."
+                                </div>
+<button class="w-full py-2 bg-primary text-on-primary font-label-sm rounded flex items-center justify-center gap-2 hover:opacity-90 transition-all">
+<span class="material-symbols-outlined text-[18px]">content_copy</span>
+                                    Copy Prompt
+                                </button>
+</div>
+<div class="p-6 border border-subtle bg-surface-bright">
+<h4 class="font-label-xs text-label-xs mb-4 text-on-surface-variant uppercase tracking-widest">Next Playbook</h4>
+<div class="group cursor-pointer">
+<div class="font-headline-md text-[18px] mb-2 group-hover:text-secondary transition-colors">Explore Resources & Essays</div>
+<a class="text-primary font-bold flex items-center gap-2 group-hover:gap-4 transition-all" href="/resources">
+                                        Continue <span class="material-symbols-outlined">east</span>
+</a>
+</div>
+</div>
+</div>
+</aside>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-muted border-t border-subtle">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-gutter py-section-v-mobile md:py-base flex flex-col md:flex-row justify-between items-center gap-8">
+<div class="flex flex-col items-center md:items-start gap-2">
+<span class="font-headline-md text-headline-md text-primary font-bold">Automyte</span>
+<p class="font-label-sm text-label-sm text-on-surface-variant">© 2024 Automyte. Created by Kishore V - Automyte CEO</p>
+</div>
+<nav class="flex flex-wrap justify-center gap-6">
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:underline" href="/docs">Documentation</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:underline" href="/privacy">Privacy Policy</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:underline" href="/terms">Terms of Service</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:underline" href="/support">Contact Support</a>
+</nav>
+<div class="flex gap-4">
+<a class="w-10 h-10 flex items-center justify-center border border-subtle rounded-DEFAULT hover:bg-white transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">hub</span>
+</a>
+<a class="w-10 h-10 flex items-center justify-center border border-subtle rounded-DEFAULT hover:bg-white transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">public</span>
+</a>
+</div>
+</div>
+</footer>
+<script>
+        // Simple scroll reveal interaction
+        document.addEventListener('DOMContentLoaded', () => {
+            const observerOptions = {
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('opacity-100', 'translate-y-0');
+                        entry.target.classList.remove('opacity-0', 'translate-y-8');
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('section, article, aside > div').forEach(el => {
+                el.classList.add('transition-all', 'duration-700', 'opacity-0', 'translate-y-8');
+                observer.observe(el);
+            });
+        });
+    </script>
+</body></html>
