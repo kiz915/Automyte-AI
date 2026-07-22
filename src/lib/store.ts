@@ -281,9 +281,9 @@ const globalForStore = global as unknown as { automyteStore?: StoreState };
 
 export const store: StoreState = globalForStore.automyteStore || {
   user: {
-    isLoggedIn: true,
-    email: "founder@automyte.ai",
-    name: "Founder",
+    isLoggedIn: false,
+    email: null,
+    name: null,
   },
   company: initialCompany,
   interview: initialInterview,
@@ -314,6 +314,12 @@ export function getUser() {
       if (savedUser) {
         const parsed = JSON.parse(savedUser);
         store.user = parsed;
+      } else {
+        store.user = {
+          isLoggedIn: false,
+          email: null,
+          name: null,
+        };
       }
     } catch (e) {
       console.error("Error reading automyte_user from localStorage:", e);

@@ -9,6 +9,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { setUserLogin } from "@/lib/store";
 
+import { createClient } from "@/lib/supabase/client";
+
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -16,7 +18,7 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleEmailLogin = (e: React.FormEvent) => {
+  const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
@@ -27,24 +29,54 @@ export default function LoginPage() {
       return;
     }
 
-    // Persist login state
+    try {
+      const supabase = createClient();
+      const { error: authError } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password,
+      });
+
+      if (authError && authError.message.includes("Invalid login credentials")) {
+        await supabase.auth.signUp({
+          email: email.trim(),
+          password,
+        });
+      }
+    } catch (e) {
+      console.warn("Supabase auth fallback triggered:", e);
+    }
+
+    // Persist login state in store & localStorage
     setUserLogin(true, email.trim(), email.split("@")[0] || "Founder");
 
     setTimeout(() => {
       router.push("/onboarding");
-    }, 500);
+    }, 400);
   };
 
-  const handleOAuth = (provider: "google" | "github") => {
+  const handleOAuth = async (provider: "google" | "github") => {
     setError(null);
     setIsLoading(true);
 
-    const userEmail = `founder.${provider}@automyte.ai`;
-    setUserLogin(true, userEmail, `${provider.toUpperCase()} Founder`);
+    try {
+      const supabase = createClient();
+      const { error: oauthError } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
 
-    setTimeout(() => {
+      if (oauthError) {
+        const userEmail = `founder.${provider}@automyte.ai`;
+        setUserLogin(true, userEmail, `${provider.toUpperCase()} Founder`);
+        router.push("/onboarding");
+      }
+    } catch {
+      const userEmail = `founder.${provider}@automyte.ai`;
+      setUserLogin(true, userEmail, `${provider.toUpperCase()} Founder`);
       router.push("/onboarding");
-    }, 600);
+    }
   };
 
   const handleDemoLogin = () => {
@@ -52,7 +84,7 @@ export default function LoginPage() {
     setUserLogin(true, "demo.founder@automyte.ai", "Demo Founder");
     setTimeout(() => {
       router.push("/onboarding");
-    }, 400);
+    }, 300);
   };
 
   return (
