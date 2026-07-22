@@ -164,7 +164,7 @@ export default function RunACompanyPage() {
     const user = getUser();
     setUserState(user);
     if (!user.isLoggedIn) {
-      setStage("auth");
+      router.push("/login");
     } else {
       const comp = getCompany();
       if (comp && comp.hasCompany) {
@@ -173,7 +173,7 @@ export default function RunACompanyPage() {
         setStage("create_company");
       }
     }
-  }, []);
+  }, [router]);
 
   // Update dashboard tasks and docs when entering dashboard
   const refreshDashboardData = () => {
