@@ -162,17 +162,19 @@ export default function RunACompanyPage() {
   // Initial Load & Auth Check
   useEffect(() => {
     const user = getUser();
-    setUserState(user);
-    if (!user.isLoggedIn) {
-      router.push("/login");
-    } else {
-      const comp = getCompany();
-      if (comp && comp.hasCompany) {
-        setStage("check_company");
+    queueMicrotask(() => {
+      setUserState(user);
+      if (!user.isLoggedIn) {
+        router.push("/login");
       } else {
-        setStage("create_company");
+        const comp = getCompany();
+        if (comp && comp.hasCompany) {
+          setStage("check_company");
+        } else {
+          setStage("create_company");
+        }
       }
-    }
+    });
   }, [router]);
 
   // Update dashboard tasks and docs when entering dashboard
@@ -714,7 +716,7 @@ export default function RunACompanyPage() {
                 {interviewHistory.map((item, idx) => (
                   <div key={idx} className="space-y-1 border-b border-black/5 pb-2 last:border-0 last:pb-0">
                     <p className="font-semibold text-slate-800">Q: {item.question}</p>
-                    <p className="text-slate-600 italic bg-white p-2 rounded-lg border border-black/5">"{item.answer}"</p>
+                    <p className="text-slate-600 italic bg-white p-2 rounded-lg border border-black/5">&quot;{item.answer}&quot;</p>
                   </div>
                 ))}
               </div>
@@ -924,7 +926,7 @@ export default function RunACompanyPage() {
                     : "bg-white text-slate-700 border border-black/10 hover:bg-slate-50"
                 }`}
               >
-                <Target className="w-3.5 h-3.5" /> Today's Mission & Tasks
+                <Target className="w-3.5 h-3.5" /> Today&apos;s Mission & Tasks
               </button>
 
               <button
@@ -973,11 +975,11 @@ export default function RunACompanyPage() {
                   {/* Today's Mission Banner */}
                   <div className="bg-gradient-to-r from-slate-900 to-slate-800 text-white p-6 rounded-3xl shadow-md space-y-3">
                     <div className="flex items-center gap-2 text-xs font-bold text-amber-400 uppercase tracking-widest">
-                      <Zap className="w-4 h-4 fill-amber-400" /> Today's Mission
+                      <Zap className="w-4 h-4 fill-amber-400" /> Today&apos;s Mission
                     </div>
                     <h2 className="text-xl font-serif font-bold">{progressState.todayMission}</h2>
                     <p className="text-xs text-slate-300 leading-relaxed">
-                      This is the single highest-impact priority recommended by your AI Executive Team for today's execution.
+                      This is the single highest-impact priority recommended by your AI Executive Team for today&apos;s execution.
                     </p>
                   </div>
 
@@ -1097,7 +1099,7 @@ export default function RunACompanyPage() {
                       <Sparkles className="w-4 h-4 text-amber-600" /> AI Executive Suggestion
                     </div>
                     <p className="text-xs text-amber-900 leading-relaxed font-medium">
-                      "After reviewing your business plan and roadmap, we recommend starting customer discovery surveys on Day 3 while engineering builds the auth scaffolding."
+                      &quot;After reviewing your business plan and roadmap, we recommend starting customer discovery surveys on Day 3 while engineering builds the auth scaffolding.&quot;
                     </p>
                   </div>
                 </div>

@@ -458,7 +458,7 @@ export default function StitchCoFounderConnectPage() {
                   </div>
 
                   <p className="text-xs text-slate-300 line-clamp-2 leading-relaxed bg-black/20 p-2.5 rounded-xl border border-white/5">
-                    "{cf.currentMission}"
+                    &quot;{cf.currentMission}&quot;
                   </p>
 
                   <div className="pt-2 flex items-center justify-between text-[11px] text-slate-400 font-mono">

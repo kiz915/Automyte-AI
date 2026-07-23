@@ -22,7 +22,7 @@ export default function TermsPage() {
 
         <div className="bg-white p-8 rounded-3xl border border-black/10 shadow-xs space-y-4 text-sm text-slate-700 leading-relaxed">
           <h2 className="text-lg font-bold text-[#1A1A1A]">1. Agreement to Terms</h2>
-          <p>By accessing or using Automyte AI ("Platform"), you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use the Platform.</p>
+          <p>By accessing or using Automyte AI (&quot;Platform&quot;), you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use the Platform.</p>
 
           <h2 className="text-lg font-bold text-[#1A1A1A]">2. Description of Service</h2>
           <p>Automyte AI provides an agentic workspace platform enabling founders to deploy, orchestrate, and collaborate with autonomous executive AI agents.</p>
@@ -34,7 +34,7 @@ export default function TermsPage() {
           <p>All content, branding, and platform architecture are the property of Automyte AI. Work products, code, and documents generated for your specific workspace belong to your company.</p>
 
           <h2 className="text-lg font-bold text-[#1A1A1A]">5. Limitation of Liability</h2>
-          <p>Automyte AI is provided on an "as is" and "as available" basis without warranties of any kind. In no event shall Automyte AI be liable for indirect, incidental, or consequential damages.</p>
+          <p>Automyte AI is provided on an &quot;as is&quot; and &quot;as available&quot; basis without warranties of any kind. In no event shall Automyte AI be liable for indirect, incidental, or consequential damages.</p>
         </div>
       </main>
 

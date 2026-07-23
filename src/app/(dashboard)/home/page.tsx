@@ -197,7 +197,7 @@ export default function HomePage() {
       [deptId]: [...(prev[deptId] || []), { role: "assistant", content: "" }]
     }));
 
-    const capitalizedRole = (deptId.charAt(0).toUpperCase() + deptId.slice(1)) as any;
+    const capitalizedRole = deptId.charAt(0).toUpperCase() + deptId.slice(1);
 
     try {
       const response = await fetch("/api/chat", {
@@ -295,12 +295,11 @@ export default function HomePage() {
   const [isTechTreeOpen, setIsTechTreeOpen] = useState(false);
   const [showToast, setShowToast] = useState(true);
 
-  // Check URL query params on mount for open_tech_tree=1
   useEffect(() => {
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
       if (params.get("open_tech_tree") === "1") {
-        setIsTechTreeOpen(true);
+        queueMicrotask(() => setIsTechTreeOpen(true));
       }
     }
   }, []);
@@ -696,7 +695,7 @@ export default function HomePage() {
                   <button
                     key={tab.id}
                     onClick={() => {
-                      setActiveTab(tab.id as any);
+                      setActiveTab(tab.id as "home" | "automyte" | "company" | "tasks" | "library");
                       setEditingDoc(null);
                     }}
                     className={`px-3 py-2.5 text-xs font-semibold flex items-center gap-1.5 border-b-2 transition-all cursor-pointer border-0 bg-transparent ${

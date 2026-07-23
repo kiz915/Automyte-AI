@@ -30,7 +30,7 @@ export default function DepartmentPage() {
   const params = useParams();
   const deptId = params.id as string;
   const meta = deptMeta[deptId] || { name: deptId, description: "", agentName: "Agent" };
-  const capitalizedRole = (deptId.charAt(0).toUpperCase() + deptId.slice(1)) as any; // Map to ExecutiveRole
+  const capitalizedRole = deptId.charAt(0).toUpperCase() + deptId.slice(1);
 
   const [messages, setMessages] = useState<Message[]>([
     {

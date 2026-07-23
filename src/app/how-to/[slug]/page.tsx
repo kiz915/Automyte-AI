@@ -231,7 +231,7 @@ export default function HowToPage() {
             {/* Quote Box */}
             <div className="mt-8 p-6 bg-white rounded-2xl border border-black/10 shadow-xs space-y-3">
               <p className="text-xs italic text-slate-600 leading-relaxed">
-                "{chapter.quote.text}"
+                &quot;{chapter.quote.text}&quot;
               </p>
               <div className="text-xs font-semibold text-[#1A1A1A]">
                 — {chapter.quote.author},{" "}
@@ -295,7 +295,7 @@ export default function HowToPage() {
                   </button>
                 </div>
                 <div className="font-mono text-xs text-slate-800 bg-white p-3.5 rounded-xl border border-black/5 leading-relaxed">
-                  "{activeStep.suggestedPrompt}"
+                  &quot;{activeStep.suggestedPrompt}&quot;
                 </div>
               </div>
 

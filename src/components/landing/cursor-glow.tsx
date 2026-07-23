@@ -19,10 +19,10 @@ export function CursorGlow() {
   useEffect(() => {
     const fine = window.matchMedia("(pointer: fine)").matches;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    setEnabled(fine && !reduced);
     if (!fine || reduced) return;
 
     const handleMove = (e: MouseEvent) => {
+      setEnabled(true);
       x.set(e.clientX);
       y.set(e.clientY);
     };

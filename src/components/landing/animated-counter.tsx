@@ -29,11 +29,7 @@ export function AnimatedCounter({
   const [display, setDisplay] = useState(format(from));
 
   useEffect(() => {
-    if (!isInView) return;
-    if (reduceMotion) {
-      setDisplay(format(to));
-      return;
-    }
+    if (!isInView || reduceMotion) return;
     const controls = animate(from, to, {
       duration,
       ease: [0.16, 1, 0.3, 1],
@@ -42,9 +38,11 @@ export function AnimatedCounter({
     return () => controls.stop();
   }, [isInView, from, to, duration, format, reduceMotion]);
 
+  const activeDisplay = (isInView && reduceMotion) ? format(to) : display;
+
   return (
     <motion.span ref={ref} className={className}>
-      {display}
+      {activeDisplay}
     </motion.span>
   );
 }

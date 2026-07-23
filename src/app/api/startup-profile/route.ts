@@ -74,7 +74,7 @@ export async function PUT(request: NextRequest) {
       "brand_kit",
     ]);
 
-    const updates: Record<string, any> = {};
+    const updates: Record<string, unknown> = {};
     for (const [key, value] of Object.entries(body)) {
       if (allowedFields.has(key)) {
         updates[key] = value;

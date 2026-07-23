@@ -64,9 +64,8 @@ export function FocusModePanel({
   const [elapsed, setElapsed] = useState(task.elapsedSeconds);
   const [activeTab, setActiveTab] = useState<"overview" | "logs" | "files">("overview");
 
-  // Timer ticker for working state
   useEffect(() => {
-    setElapsed(task.elapsedSeconds);
+    queueMicrotask(() => setElapsed(task.elapsedSeconds));
     if (task.status !== "working") return;
 
     const timer = setInterval(() => {
@@ -74,7 +73,7 @@ export function FocusModePanel({
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [task.status, task.elapsedSeconds, task.id]);
+  }, [task.status, task.id, task.elapsedSeconds]);
 
   const deptConfig = DEPARTMENT_CONFIGS[agent.departmentId] || DEPARTMENT_CONFIGS.engineering;
   const accentColor = agent.accentColor || deptConfig.accentColor;

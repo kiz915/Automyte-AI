@@ -107,7 +107,7 @@ export default function SettingsPage() {
         ].map((tab) => (
           <button
             key={tab.id}
-            onClick={() => setActiveTab(tab.id as any)}
+            onClick={() => setActiveTab(tab.id as "profile" | "brand" | "models" | "integrations")}
             className={`w-full text-left px-3 py-2 rounded-lg text-[13px] font-medium flex items-center gap-2.5 transition-colors cursor-pointer ${
               activeTab === tab.id
                 ? "bg-ink/5 text-ink font-semibold"

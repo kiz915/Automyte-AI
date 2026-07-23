@@ -20,8 +20,10 @@ export function LoadingScreen({ onDone }: { onDone?: () => void }) {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     if (reduced) {
-      setVisible(false);
-      onDone?.();
+      queueMicrotask(() => {
+        setVisible(false);
+        onDone?.();
+      });
       return;
     }
 

@@ -6,7 +6,7 @@
 import { runExecutive } from "@/lib/ai/executive-factory";
 import { NextRequest, NextResponse } from "next/server";
 import { addTask, addDocument, updateProfile, addApproval } from "@/lib/store";
-import type { ExecutiveRole, StartupProfile, BrandKit } from "@/types/database";
+import type { ExecutiveRole, StartupProfile, BrandKit, DocumentType } from "@/types/database";
 import type OpenAI from "openai";
 
 interface ChatRequestBody {
@@ -120,7 +120,7 @@ export async function POST(request: NextRequest) {
             if (finishReason === "tool_calls" || finishReason === "stop") {
               if (pendingToolCalls.size > 0) {
                 for (const [, toolCall] of pendingToolCalls) {
-                  let parsedArgs: Record<string, any> = {};
+                  let parsedArgs: Record<string, unknown> = {};
                   try {
                     parsedArgs = JSON.parse(toolCall.arguments);
                   } catch {
@@ -133,7 +133,7 @@ export async function POST(request: NextRequest) {
                       addTask({
                         title: String(parsedArgs.title || ""),
                         description: String(parsedArgs.description || ""),
-                        priority: (parsedArgs.priority as any) || "medium",
+                        priority: (parsedArgs.priority as "low" | "medium" | "high" | "critical") || "medium",
                         requested_by: "user_founder",
                         assigned_executive_id: `exec_${executiveRole.toLowerCase()}`,
                         module: "general",
@@ -148,7 +148,7 @@ export async function POST(request: NextRequest) {
                     } else if (toolCall.name === "create_document") {
                       addDocument({
                         name: String(parsedArgs.name || ""),
-                        type: (parsedArgs.type as any) || "custom",
+                        type: (parsedArgs.type as DocumentType) || "custom",
                         content: String(parsedArgs.content || ""),
                         storage_ref: null,
                         pinned: false,
@@ -167,7 +167,7 @@ export async function POST(request: NextRequest) {
                         task_id: null,
                         automation_id: null,
                         requested_action: String(parsedArgs.requested_action || ""),
-                        payload: (parsedArgs.payload as any) || {},
+                        payload: (parsedArgs.payload as Record<string, unknown>) || {},
                       });
                     }
                   } catch (err) {

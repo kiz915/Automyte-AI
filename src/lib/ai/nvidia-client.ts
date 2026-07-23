@@ -48,7 +48,7 @@ const PROVIDER_CONFIGS: Record<ModelProvider, () => ProviderConfig | null> = {
 // Fallback order: NVIDIA → OpenAI → Google → Anthropic
 const FALLBACK_ORDER: ModelProvider[] = ["nvidia", "openai", "google", "anthropic"];
 
-let _clientCache: Map<string, OpenAI> = new Map();
+const _clientCache: Map<string, OpenAI> = new Map();
 
 /**
  * Get an OpenAI-compatible client for the specified provider.
